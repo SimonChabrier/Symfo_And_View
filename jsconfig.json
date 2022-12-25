@@ -1,0 +1,9 @@
+// fichier de config pour utiliser l'extension Vetur dans VSCode
+// je lui dit ou sont les fichiers .vue pour qu'il trouver la bonne version de Vue et qu'il s'adapte en fonction.
+// Il faut avoir le fichier package.json dans le dossier root du projet pour qu'il fase le lien... 
+// https://vuejs.github.io/vetur/guide/setup.html#project-setup
+{
+    "include": [
+      "./assets/**/*"
+, "vue.config.js", "vue.config.js"    ]
+  }
