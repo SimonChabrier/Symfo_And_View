@@ -63,7 +63,7 @@ export default {
             this.errorMessage = '';
 
             try {
-                await axios.post('https://127.0.0.1:8000/api/register', datas)
+                await axios.post('https://127.0.0.1:8000/api/users/register', datas)
                 this.successMessage = 'Votre compte a bien été créé';
                 this.redirect();
             } catch (error) {
@@ -81,14 +81,19 @@ export default {
 
 <style lang="scss" scoped>
 
-
+h1 {
+    font-size: 24px;
+    font-weight: 200;
+    color: $green;
+}
 .register {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    margin: 20px 0;
+    padding: $gutter-big;
+    margin: $gutter-big 0;
+    background-color: $mediumBlue;
 }
 
 .registerForm {
@@ -96,31 +101,33 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 20px;
-    margin: 20px 0;
-    gap: 10px;
+    padding: $gutter-big;
+    margin: $gutter-big 0;
+    gap: $gutter-small;
+    width: 80%;
 }
 
 input {
-    width: 600px;
+    width: 100%;
     height: 50px;
-    padding: 0 10px;
-    margin-bottom: 20px;
+    padding: 0 $gutter-small;
+    margin-bottom: $gutter-big;
     border: none;
     border-radius: 5px;
 }
 
 label {
     font-size: 14px;
+    margin-bottom: $gutter-small;
     font-weight: 200;
-    color: #333;
+    color: $lightWhite;
 }
 
 input[type="submit"] {
     width: 100px;
     height: 40px;
     background-color: $red;
-    margin : $gutter-medium 0 $gutter-medium 0;
+    margin : $gutter-medium 0 0 0;
     color: $lightWhite;
     border: none;
     border-radius: 5px;

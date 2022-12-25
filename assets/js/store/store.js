@@ -46,6 +46,10 @@ export default createStore ({
     async deleteUser(context, id) {
       const response = (await axios.delete (API_ROOT_URL + '/' + id)).data
       context.commit('setUser', response);
+    },
+    async registerUser(context, user) {
+      const response = (await axios.post (API_ROOT_URL + '/register', user)).data
+      context.commit('setUser', response);
     }
    
   },

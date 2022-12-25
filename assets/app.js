@@ -15,8 +15,8 @@ import { createApp } from "vue";
 
 import App from "@root/App.vue";
 
-import router from "@app/router";
-import store from "@app/store";
+import router from "@app/router/router";
+import store from "@app/store/store";
 
 // monter App sur l'élément #vue-app dans le fichier base.html.twig
 createApp(App)

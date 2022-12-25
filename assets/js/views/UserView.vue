@@ -5,13 +5,16 @@
                 Profil de : {{ user.username }}
             </li>
             <li>
-                Email : {{ user.email }}
+                User ID: {{ user.id }}
             </li>
             <li>
-                Id: {{ user.id }}
+                Email : {{ user.email }}
             </li>
             <li v-for="role in user.roles" :key="role">
-                Roles: {{ role }}
+                Rôle : {{ role }}
+            </li>
+            <li>
+                Slug : {{ user.slug }}
             </li>
             <li>
                 Utilisateur vérifié : {{ user.isVerified === true ? 'oui' : 'non' }}
@@ -96,7 +99,7 @@ input[type="submit"] {
     width: 100px;
     height: 40px;
     background-color: $red;
-    margin : $gutter-medium 0 $gutter-medium 0;
+    margin : $gutter-medium 0 0 0;
     color: $lightWhite;
     border: none;
     border-radius: 5px;

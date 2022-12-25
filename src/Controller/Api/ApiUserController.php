@@ -54,7 +54,7 @@ class ApiUserController extends AbstractController
 
     /**
      * Enregistrer un nouvel utilisateur
-     * @Route("/api/register", name="api.post.user", methods={"POST"})
+     * @Route("/api/users/register", name="api.post.user", methods={"POST"})
      */
     public function apiPostUser(
         EntityManagerInterface $doctrine,

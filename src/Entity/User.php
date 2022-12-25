@@ -66,6 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @Gedmo\Slug(fields={"username"})
      * @ORM\Column(type="string", length=50)
+     * @Groups({"user:read"})
      */
     private $slug;
 

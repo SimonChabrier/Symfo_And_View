@@ -1,6 +1,6 @@
 <template>
     <div class="home">
-        <h1 class="title">{{ title }}</h1>
+        <h1 class="title">{{ info }} </h1>
         <!-- liste des users -->
         <ul>
             <li v-for="user in users" :key="user.id">
@@ -11,9 +11,26 @@
             </li>
         </ul>
     </div>
+
+<div class="register">
+    <form class= "registerForm" action="">
+        <label for="username">Nom d'utilisateur</label>
+        <input type="text" placeholder="Username" v-model="username">
+        
+        <label for="email">Email</label>
+        <input type="email" placeholder="Email" v-model="email">
+        
+        <label for="password">Mot de passe</label>
+        <input type="password" placeholder="Password" v-model="password">
+      
+        <input type="submit" value="S'inscrire" @click="submitForm">
+    </form>
+</div>  
+
 </template>
 
 <script>
+
 export default {
 
     name: 'HomeView',
@@ -21,17 +38,44 @@ export default {
     // state
     data () {
         return {
-            title : "",
-            users: []
+            info : "",
+            users: [],
+            "count": 0,
+            username: '',
+            email: '',
+            password: '',
         }
+    },
+    methods : {
+        submitForm () {
+            // get data from form
+            let datas = {
+                username: this.username,
+                email: this.email,
+                password: this.password,
+            }
+            this.$store.dispatch('registerUser', datas)
+            // refresh de la liste des users
+            .then(() => {
+                this.users = this.$store.dispatch('fetchUsers');
+            })
+        },
+    },
+    computed : {
+        // refresh de la liste des users
+        users () {
+            return this.$store.state.users;
+        }
+
     },
     // imort des users depuis le store
     mounted () {
         this.$store.dispatch('fetchUsers')
         .then(() => {
-            this.users = this.$store.state.users
-            this.users.length === 0 ? this.title = "Aucun utilisateur en BDD !" : this.title = "Liste des utilisateurs"
-            console.log(this.users.length)
+            this.users = this.$store.state.users;
+            this.count = this.users.length;
+            this.count === 0 || this.count === 1 ? this.info = `${this.count} utilisateur en BDD` : '';
+            this.count > 1 ? this.info = `${this.count} utilisateurs en BDD` : '';
         })
     }
 
@@ -46,7 +90,8 @@ export default {
     background-color: $mediumBlue;
     justify-content: center;
     align-items: center;
-    height: 400px;
+    min-height: 400px;
+    padding: $gutter-big 0;
     margin: 0 auto;
     flex-direction: column;
 
@@ -62,7 +107,54 @@ export default {
         color: $lightWhite;
         line-height: $gutter-big;
     }
-    
+}
+
+.register {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: $gutter-big;
+    margin: $gutter-big 0;
+    background-color: $mediumBlue;
+}
+
+.registerForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: $gutter-big;
+    margin: $gutter-big 0;
+    gap: $gutter-small;
+    width: 80%;
+}
+
+input {
+    width: 100%;
+    height: 50px;
+    padding: 0 $gutter-small;
+    margin-bottom: $gutter-big;
+    border: none;
+    border-radius: 5px;
+}
+
+label {
+    font-size: 14px;
+    margin-bottom: $gutter-small;
+    font-weight: 200;
+    color: $lightWhite;
+}
+
+input[type="submit"] {
+    width: 100px;
+    height: 40px;
+    background-color: $red;
+    margin : $gutter-medium 0 0 0;
+    color: $lightWhite;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 </style>
