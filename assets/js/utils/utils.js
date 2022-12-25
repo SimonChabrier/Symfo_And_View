@@ -29,7 +29,7 @@ const utils = {
         });
     },
 
-    // afficher l'heure de la date au format 12:00
+    // afficher l'heure de la date au format 12h00
     formatTime(dateTime) {
         const date =  new Date(dateTime).toLocaleTimeString('fr-FR', {
             hour: '2-digit',

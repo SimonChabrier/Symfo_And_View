@@ -8,7 +8,12 @@
 <script>
 export default {
     name: 'NavBarComponent',
-    //message: 'Hello World, I am a NavBarComponent',
+    
+    data() {
+        return {
+            message: 'Hello from NavBarComponent'
+        }
+    }
 }
 </script>
 
@@ -20,17 +25,18 @@ export default {
   align-items: center;
   padding: 15px 0;
   margin: 20px 0;
+  color: $lightWhite;
+  background-color: $mediumBlue;
 }
 
 .nav-bar a {
   font-weight: bold;
-  color: #333;
   text-decoration: none;
   font-size: 1.2rem;
-  padding: 0 1rem;
+  padding: 0 $gutter-medium;
 }
 .nav-bar a.router-link-exact-active {
-  color:rgb(182, 48, 48);
+  color: $orange
 }
 
 
