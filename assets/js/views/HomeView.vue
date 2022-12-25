@@ -1,30 +1,25 @@
 <template>
-<div class="main">
-  <h1>{{ msg }}</h1>
-</div>
+    <div class="home">
+        <h1>{{ mes }}</h1>
+        <p>template</p>
+    </div>
 </template>
-
 
 <script>
 export default {
 
-    name: 'TestView',
+    name: 'HomeView',
 
+    // state
     data () {
         return {
-            msg: 'test view'
+            mes : 'Hello World'
         }
     }
 
 }
 </script>
 
-<style lang="scss" scoped>
-.main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: red;
-    height: 400px;
-}
+<style>
+
 </style>

@@ -1,53 +1,41 @@
 <template>
-  <div>
-      <!-- insérer le composant navbar ici -->
-      <NavBarComponant />
-
-      <!-- <router-view/> insère la view demandé sur la route ici -->
-      <router-view/>
-
-      <!-- insérer le composant footer ici -->
-        <FooterComponent />
-    </div>
-  </template>
+    <NavBarComponant />
+      <router-view />
+    <FooterComponent />
+</template>
   
-  <script>
+<script>
 
-  import NavBarComponant from '@app/components/NavBarComponent.vue'
-  import FooterComponent from '@app/components/FooterComponent.vue'
-  // import des variables de style
-  // import './styles/_vars.scss';
+import NavBarComponant from '@comp/NavBarComponent.vue'
+import FooterComponent from '@comp/FooterComponent.vue'
 
-  export default {
-  
-    name: 'App',
-  
-    components: {
-      NavBarComponant,
-      FooterComponent
-    },
-  
-    data() {
-      return {
-        headerTitle: 'Header Title',
-        headerSubtitle: 'Header Subtitle',
-      }
+export default {
+
+  name: 'App',
+
+  components: {
+    NavBarComponant,
+    FooterComponent
+  },
+
+  data() {
+    return {
+      // définir les données ici si nécessaire
     }
   }
-  </script>
+}
+
+</script>
   
-  <style lang="scss">
+<style lang="scss">
+
+* {
+box-sizing: border-box;
+};
   
-  * {
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Open Sans', sans-serif;
-    color: #333;
-    font-size: 16px;
-    background-color: $lightblue;
-    
-  }
-    
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+};
+
 </style>

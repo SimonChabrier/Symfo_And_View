@@ -1,8 +1,9 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
-import App from '../../App.vue'
-import HomeView from '../views/HomeView.vue'
-import RegisterView from '../views/RegisterView.vue'
+
+import HomeView from '@view/HomeView.vue'
+import RegisterView from '@view/RegisterView.vue'
+import error404 from '@view/404.vue'
 
 const routes = [
   {
@@ -20,6 +21,13 @@ const routes = [
 //     name: 'user',
 //     component: RecipeView
 //     },
+
+ //404 page
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: error404
+  }
 ]
 
 const router = createRouter({

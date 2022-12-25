@@ -7,13 +7,8 @@
 
 <script>
 export default {
-
     name: 'NavBarComponent',
-
-    props: {
-        //
-    }
-
+    //message: 'Hello World, I am a NavBarComponent',
 }
 </script>
 

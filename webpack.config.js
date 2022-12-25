@@ -1,6 +1,7 @@
 const Encore = require('@symfony/webpack-encore');
 const path = require('path');
 const webpack = require('webpack');
+const ESLintWebpackPlugin = require('eslint-webpack-plugin');
 
 if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
@@ -49,15 +50,28 @@ loaderRule.oneOf.forEach(rule => {
 
 // Déclarer explicitement les plugins de webpack ici pour ne pas avoir les messages relatifs à ces plugins en console
 .addPlugin(new webpack.DefinePlugin({
-    __VUE_OPTIONS_API__: false,
-    __VUE_PROD_DEVTOOLS__: false,
+    __VUE_OPTIONS_API__: true,
+    __VUE_PROD_DEVTOOLS__: true,
 }))
 
 // Ajouter des alias pour les chemins d'accès aux fichiers sinon Vue ne les trouve pas avec @
 .addAliases({
-    '@app': path.resolve('assets/js'),
+    
     '@root': path.resolve('assets'),
     '@styles': path.resolve('assets/styles'),
+    '@app': path.resolve('assets/js'),
+    '@view': path.resolve('assets/js/views'),
+    "@comp": path.resolve('assets/js/components'),
+    
 })
 
-module.exports = Encore.getWebpackConfig();
+// Ajouter un plugin pour linter les fichiers js 
+// ne pas mettre vu et js dans les extensions sinon il y a des erreurs
+// la config est ensuite faire dans .eslintrc 
+.addPlugin(new ESLintWebpackPlugin({
+    extensions: ['ts'],
+}))
+
+module.exports = Encore.getWebpackConfig(); 
+
+
