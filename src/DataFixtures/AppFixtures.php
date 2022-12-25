@@ -31,7 +31,7 @@ class AppFixtures extends Fixture
 
         $users = [];
 
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $user = new User();
             $user->setUsername($faker->userName);
             $user->setEmail('user' . $i . '@user.fr');

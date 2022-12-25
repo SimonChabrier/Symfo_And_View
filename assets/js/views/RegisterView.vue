@@ -12,13 +12,13 @@
             <input type="text" placeholder="Username" v-model="username">
             
             <label for="email">Email</label>
-            <input type="text" placeholder="Email" v-model="email">
+            <input type="email" placeholder="Email" v-model="email">
             
             <label for="password">Mot de passe</label>
-            <input type="text" placeholder="Password" v-model="password">
+            <input type="password" placeholder="Password" v-model="password">
             
             <label for="confirmPassword">Confirmer le mot de passe</label>
-            <input type="text" placeholder="Confirm Password" v-model="confirmPassword">
+            <input type="password" placeholder="Confirm Password" v-model="confirmPassword">
             
             <input type="submit" value="S'inscrire" @click="submitForm">
             
@@ -119,8 +119,9 @@ label {
 input[type="submit"] {
     width: 100px;
     height: 40px;
-    background-color: rgb(182, 48, 48);
-    color: #fff;
+    background-color: $red;
+    margin : $gutter-medium 0 $gutter-medium 0;
+    color: $lightWhite;
     border: none;
     border-radius: 5px;
     cursor: pointer;

@@ -62,6 +62,7 @@ loaderRule.oneOf.forEach(rule => {
     '@app': path.resolve('assets/js'),
     '@view': path.resolve('assets/js/views'),
     "@comp": path.resolve('assets/js/components'),
+    "@utils": path.resolve('assets/js/utils'),
     
 })
 

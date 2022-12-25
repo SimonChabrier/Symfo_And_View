@@ -1,9 +1,6 @@
 <template>
     <div class="notfound">
-        <!-- <span>{{ message }}</span> -->
-        <button @click="count++">
-            You clicked me {{ count }} times.
-    </button>
+        <span>{{ message }}</span>
     </div>
 </template>
 
@@ -12,11 +9,11 @@
 export default {
 
     name: 'error404',
-    message: '404 Not Found',
 
     data() {
         return {
-            count: 0
+            count: 0,
+            message: 'Oupsssss....404 Not Found', 
         }
     },
     methods: {
@@ -25,11 +22,6 @@ export default {
             this.count++
         }
   },
-  computed: {
-    message() {
-      return `You clicked me ${this.count} times.`
-    }
-  }
 }
 </script>
 
@@ -43,10 +35,11 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
+        margin: 0 auto;
     }
 
     span {
-        font-size: 8rem;
+        font-size: 4rem;
         color: $lightWhite;
     }
 </style>

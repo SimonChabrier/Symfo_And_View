@@ -36,6 +36,8 @@ box-sizing: border-box;
 body {
   font-family: 'Open Sans', sans-serif;
   font-size: 16px;
+  width: 80%;
+  margin: 0 auto;
 };
 
 </style>
