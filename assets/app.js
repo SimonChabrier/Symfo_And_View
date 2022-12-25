@@ -6,8 +6,8 @@
  */
 
 // import des styles
-import './js/assets/styles/app.css';
-import './js/assets/styles/reset.css';
+import '@styles/app.css';
+import '@styles/reset.css';
 
 // start the Stimulus application (non utilisé pour le moment)
 // import './bootstrap';
@@ -15,10 +15,10 @@ import './js/assets/styles/reset.css';
 // initialisation de Vue et de l'application
 import { createApp } from 'vue'
 
-import App from './App.vue';
+import App from '@root/App.vue';
 
-import router from './js/router'
-import store from './js/store'
+import router from '@app/router'
+import store from '@app/store'
 
 // monter App sur l'élément #vue-app dans le fichier base.html.twig
 createApp(App)

@@ -4,6 +4,7 @@
 // https://vuejs.github.io/vetur/guide/setup.html#project-setup
 {
     "include": [
-      "./assets/**/*"
-, "vue.config.js", "vue.config.js"    ]
+      "./assets/**/*",
+      "vue.config.js", "vue.config.js"    
+    ]
   }

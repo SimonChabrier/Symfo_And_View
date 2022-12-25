@@ -1,11 +1,5 @@
 <template>
   <div>
-      <!-- insérer le composant header ici -->
-      <HeaderComponent
-      :title="headerTitle"
-      :subtitle="headerSubtitle"
-      />
-
       <!-- insérer le composant navbar ici -->
       <NavBarComponant />
 
@@ -19,24 +13,24 @@
   
   <script>
 
-  import HeaderComponent from './js/components/HeaderComponent.vue'
-  import NavBarComponant from './js/components/NavBarComponent.vue'
-  import FooterComponent from './js/components/FooterComponent.vue'
+  import NavBarComponant from '@app/components/NavBarComponent.vue'
+  import FooterComponent from '@app/components/FooterComponent.vue'
+  // import des variables de style
+  // import './styles/_vars.scss';
 
   export default {
   
     name: 'App',
   
     components: {
-      HeaderComponent,
       NavBarComponant,
       FooterComponent
     },
   
     data() {
       return {
-        headerTitle: '10 minutes',
-        headerSubtitle: 'O\'Four',
+        headerTitle: 'Header Title',
+        headerSubtitle: 'Header Subtitle',
       }
     }
   }
@@ -52,7 +46,7 @@
     font-family: 'Open Sans', sans-serif;
     color: #333;
     font-size: 16px;
-    background-color: #f5f5f5;
+    background-color: $lightblue;
     
   }
     
