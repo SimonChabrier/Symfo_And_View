@@ -3,6 +3,7 @@
 
     <div class="home">
         <h1 class="title">{{ info }} </h1>
+        
         <!-- liste des users -->
         <ul>
             <li v-for="user in $store.state.users" :key="user.id"><!-- boucle directement sur le store -->
@@ -12,6 +13,7 @@
                 <!-- delete button -->
             </li>
         </ul>
+
     </div>
 
     <div class="last" v-if="lastUser.username">
@@ -20,8 +22,8 @@
         </span>
     </div>
 
-<div class="register">
-    <form class= "registerForm" @submit.prevent="register">
+<div class="register" @submit.prevent="register">
+    <form class= "registerForm">
         <label for="username">Nom d'utilisateur</label>
         <input type="text" placeholder="Username" v-model="username">
         
@@ -31,7 +33,8 @@
         <label for="password">Mot de passe</label>
         <input type="password" placeholder="Password" v-model="password">
       
-        <input type="submit" value="S'inscrire">
+        <button-component @click="''" :text="'inscription'" :color="'red'">
+        </button-component>
     </form>
 </div>  
 
@@ -42,6 +45,7 @@
 /////////////////// import des composants ///////////////////
 
 // import axios from 'axios';
+import ButtonComponent from '@comp/elements/ButtonComponent.vue'
 
 /////////////////// export du composant ///////////////////
 
@@ -50,7 +54,7 @@ export default {
     name: 'HomeView',
 
     components: {
-        // définir les composants utilisés dans le template
+        ButtonComponent
     },
 
  /////////////////// state local ///////////////////
@@ -97,7 +101,6 @@ export default {
     // appelé à l'initialisation du composant
     mounted () {
         // console.log('mounted')
-
         document.title = "Accueil";
         this.users = this.$store.dispatch('fetchUsers');
     },
@@ -108,6 +111,7 @@ export default {
     // appelé à chaque action sur le composant
     updated () {
         // console.log('updated') 
+        this.lastUser = this.$store.state.user;
     },
     beforeDestroy () {
         // console.log('beforeDestroy')
@@ -181,17 +185,6 @@ label {
     margin-bottom: $gutter-small;
     font-weight: 200;
     color: $lightWhite;
-}
-
-input[type="submit"] {
-    width: 100px;
-    height: 40px;
-    background-color: $red;
-    margin : $gutter-medium 0 0 0;
-    color: $lightWhite;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
 }
 
 .last {
