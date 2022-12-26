@@ -7,7 +7,7 @@ export default createStore ({
   state: {
     count : '',
     deleteMessage: '',
-    users: [],
+    allUsers: [],
     user: {},
     searchUsers : []
   },
@@ -15,7 +15,7 @@ export default createStore ({
   // les getters permettent de récupérer des données du state dans son contexte et son état actuel
   getters: {
     getUsers(state) {
-      return state.users;
+      return state.allUsers;
     },
     getUser(state) {
       return state.user;
@@ -26,12 +26,12 @@ export default createStore ({
   mutations: {
 
     // Gestion des users
-    setUsers(state, users) {
-      state.users = users;
+    setUsers(state, allUsers) {
+      state.allUsers = allUsers;
     },
     setUser(state, user) {
       state.user = user;
-      state.users.push(user);
+      state.allUsers.push(user);
     },
     setSearchUsers(state, results) {
       state.searchUsers = results;
@@ -88,7 +88,7 @@ export default createStore ({
 
     // retirer chaque user supprimé du tableau users pour garder la liste à jour dans le composant HomeView
     removeDeletedUserFromUsers(context, id) {
-      const users = context.state.users.filter(user => user.id !== id);
+      const users = context.state.allUsers.filter(user => user.id !== id);
       context.commit('setUsers', users);
     },
     // enregistrer un nouveau user
@@ -101,7 +101,7 @@ export default createStore ({
     searchUser(context, search) {
 
       if(search.length > 0) {
-      const results = context.state.users.filter(user => user.username.toLowerCase().includes(search.toLowerCase()));
+      const results = context.state.allUsers.filter(user => user.username.toLowerCase().includes(search.toLowerCase()));
       context.commit('setSearchUsers', results);
       } else {
         const results = '';

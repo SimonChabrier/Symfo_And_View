@@ -43,7 +43,7 @@
     
     <!-- liste des users -->
     <div class="users">
-        <div class="item" v-for="user in $store.state.users" :key="user.id">
+        <div class="item" v-for="user in $store.state.allUsers" :key="user.id">
             <!-- router link pour lier chaque user à son profil -->
             <router-link :to="{ name: 'user', params: { id: user.id }}">
                 <span v-if="!user.message">
@@ -115,7 +115,7 @@ export default {
         register () { 
             this.$store.dispatch('registerUser', this.getFormDatas) 
             this.resetForm()
-            this.lastUser = this.$store.state.users[this.$store.state.users.length - 1];
+            this.lastUser = this.$store.state.allUsers[this.$store.state.allUsers.length - 1];
         },
         deleteUser (id) { 
             this.$store.dispatch('deleteUser', id)
