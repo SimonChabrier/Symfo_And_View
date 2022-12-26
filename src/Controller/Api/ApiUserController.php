@@ -136,7 +136,7 @@ class ApiUserController extends AbstractController
         return $this->json(
             [
                 'message' => 'Utilisateur supprimé', 
-                'username' => $user->getUserIdentifier(),
+                'username' => $user->getUserName(),
             ],
             Response::HTTP_OK,
             [],
