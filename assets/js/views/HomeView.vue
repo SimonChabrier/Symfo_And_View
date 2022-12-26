@@ -28,13 +28,13 @@
     </span>
 </div>
 
-<div class="last" v-if="lastUser.username">
+<div class="last" v-if="$store.state.user.username">
     <button class="close" aria-label='close message'
-        @click = "closeNewUserCreatedMessage()" 
+        @click = "closeNewUserCreatedMessage(event)" 
         type='button'> X
     </button>
     <span>
-        Dernier utilisateur inscrit : {{ lastUser.username }}
+        Dernier utilisateur inscrit : {{ $store.state.user.username }}
     </span>
 </div>
 
@@ -102,7 +102,6 @@ export default {
 
     data () {
         return {
-            lastUser: {}, 
             username: '',
             email: '',
             password: '',
@@ -115,7 +114,8 @@ export default {
         register () { 
             this.$store.dispatch('registerUser', this.getFormDatas) 
             this.resetForm()
-            this.lastUser = this.$store.state.allUsers[this.$store.state.allUsers.length - 1];
+            this.lastUser = this.$store.state.user;
+            console.log(this.lastUser)
         },
         deleteUser (id) { 
             this.$store.dispatch('deleteUser', id)
@@ -129,7 +129,7 @@ export default {
             this.$store.state.deleteMessage = false
         },
         closeNewUserCreatedMessage () { 
-            this.lastUser = {}
+            this.$store.state.user = false
         },
     },
    
