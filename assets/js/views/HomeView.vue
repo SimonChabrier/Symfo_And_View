@@ -4,7 +4,7 @@
     <input type="text" placeholder="Rechercher un utilisateur" v-model="search" @input="getSearchDatas">
 </div>
 
-<div class="last results" v-if="$store.state.searchUsers.length">
+<div class="results" v-if="$store.state.searchUsers.length">
     <div class="item" v-for="user in $store.state.searchUsers" :key="user.id">
         <!-- router link pour lier chaque user à son profil -->
         <router-link :to="{ name: 'user', params: { id: user.id }}">
@@ -12,30 +12,9 @@
         </router-link>
             
         <button aria-label='delete item' v-if="user" 
-            @click = " deleteUser(user.id) " 
+            @click = "deleteUser(user.id)" 
             type='button'> X
         </button>
-    </div>
-</div>
-
-<div class="home">
-    <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }} </h1>
-    
-    <!-- liste des users -->
-    <div class="users">
-        <div class="item" v-for="user in $store.state.users" :key="user.id">
-            <!-- router link pour lier chaque user à son profil -->
-            <router-link :to="{ name: 'user', params: { id: user.id }}">
-                <span v-if="!user.message">
-                    {{ user.username }} 
-                </span>
-            </router-link>
-                
-            <button aria-label='delete item' v-if="!user.message" 
-                @click = " deleteUser(user.id) " 
-                type='button'> X
-            </button>
-        </div>
     </div>
 </div>
 
@@ -57,6 +36,27 @@
     <span>
         Dernier utilisateur inscrit : {{ lastUser.username }}
     </span>
+</div>
+
+<div class="home">
+    <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }} </h1>
+    
+    <!-- liste des users -->
+    <div class="users">
+        <div class="item" v-for="user in $store.state.users" :key="user.id">
+            <!-- router link pour lier chaque user à son profil -->
+            <router-link :to="{ name: 'user', params: { id: user.id }}">
+                <span v-if="!user.message">
+                    {{ user.username }} 
+                </span>
+            </router-link>
+                
+            <button aria-label='delete item' v-if="!user.message" 
+                @click = " deleteUser(user.id) " 
+                type='button'> X
+            </button>
+        </div>
+    </div>
 </div>
 
 <div class="register" @submit.prevent="register">
@@ -292,6 +292,22 @@ label {
     padding: $gutter-big;
     margin: $gutter-big 0;
     background-color: $green;
+
+    & span {
+        color: $lightWhite;
+    }
+}
+
+.results {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    background-color: $green;
+    flex-direction: column;
+    gap: 10px;
 
     & span {
         color: $lightWhite;

@@ -73,10 +73,17 @@ export default createStore ({
 
     // delete un user par son id
     async deleteUser(context, id) {
+      // supprime l'utilisateur de la base de données
       const response = (await axios.delete (API_ROOT_URL + '/' + id)).data
+      // supprime l'utilisateur supprimé du state
       context.commit('setUser', response);
+      // met à jour le compteur de users ne enlevant 1
       context.commit('decrementCount');
+      // retourne un message de confirmation
       context.commit('confirmDelete', `L'utilisateur ${response.username} a bien été supprimé`);
+      // supprimer l'utilisateur supprimé si il est dans le tableau des résultats de recherche
+      const searchUsers = context.state.searchUsers.filter(user => user.id !== id);
+      context.commit('setSearchUsers', searchUsers);
     },
 
     // retirer chaque user supprimé du tableau users pour garder la liste à jour dans le composant HomeView
@@ -93,7 +100,7 @@ export default createStore ({
     
     searchUser(context, search) {
 
-      if(search.length > 3) {
+      if(search.length > 0) {
       const results = context.state.users.filter(user => user.username.toLowerCase().includes(search.toLowerCase()));
       context.commit('setSearchUsers', results);
       } else {
