@@ -42,17 +42,16 @@
     <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }} </h1>
     
     <!-- liste des users -->
-    <div class="users">
+    <div class="users" v-if="$store.state.allUsers.length > 0">
         <div class="item" v-for="user in $store.state.allUsers" :key="user.id">
             <!-- router link pour lier chaque user à son profil -->
             <router-link :to="{ name: 'user', params: { id: user.id }}">
-                <!-- user.message est retourné en réponse JSON par l'api à la suppression -->
-                <span v-if="!user.message">
+                <span >
                     {{ user.username }} 
                 </span>
             </router-link>
                 
-            <button aria-label='delete item' v-if="!user.message" 
+            <button aria-label='delete item' 
                 @click = " deleteUser(user.id) " 
                 type='button'> X
             </button>
@@ -186,19 +185,17 @@ export default {
 
 .home {
     display: flex;
-    background-color: $mediumBlue;
-    justify-content: center;
-    align-items: center;
-    min-height: 400px;
-    padding: $gutter-big 0;
-    margin: 0 auto;
     flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    background-color: $mediumBlue;
 
     & .title {
         font-size: large;
         font-size: 1.5rem;
         color: $lightWhite;
-        margin-bottom: $gutter-medium;
+        margin-top: $gutter-big;
+        margin-bottom: $gutter-big;
     }
 
     & ul, li {
@@ -213,6 +210,8 @@ export default {
     flex-wrap: wrap;
     flex-direction: column;
     gap: 10px;
+    margin-top: $gutter-big;
+    margin-bottom: $gutter-big;
 }
 
 .item {

@@ -88,9 +88,7 @@ export default createStore ({
     // enregistrer un nouveau user
     async registerUser(context, user) {
       const response = (await axios.post (API_ROOT_URL + '/register', user)).data
-      console.log(response);
       context.commit('setUser', response);
-      console.log(context.state.user);
       context.commit('incrementCount');
     },
     // cherche dans le tableau des users
