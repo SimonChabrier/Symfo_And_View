@@ -229,7 +229,7 @@ export default {
     justify-content: center;
     align-items: center;
     padding: $gutter-big;
-    margin: $gutter-big 0;
+    margin: 0 0 $gutter-big 0;
     background-color: $green;
     position: relative;
 
@@ -305,7 +305,7 @@ label {
     justify-content: center;
     align-items: center;
     padding: 1.5rem;
-    margin: 1.5rem 0;
+    margin: 0 0 $gutter-big 0;
     background-color: $green;
     flex-direction: column;
     gap: 10px;

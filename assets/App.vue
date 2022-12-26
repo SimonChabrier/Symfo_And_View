@@ -107,4 +107,12 @@ a {
   }
 };
 
+// media queries
+
+@media screen and (min-width: 768px) {
+  body {
+    width: 400px;
+  }
+};
+
 </style>
