@@ -1,4 +1,6 @@
 <template>
+    <meta name="author" content="Aurélien">
+
     <div class="home">
         <h1 class="title">{{ info }} </h1>
         <!-- liste des users -->
@@ -19,7 +21,7 @@
     </div>
 
 <div class="register">
-    <form class= "registerForm" @submit.prevent="registerUser">
+    <form class= "registerForm" @submit.prevent="register">
         <label for="username">Nom d'utilisateur</label>
         <input type="text" placeholder="Username" v-model="username">
         
@@ -37,11 +39,22 @@
 
 <script>
 
+/////////////////// import des composants ///////////////////
+
+// import axios from 'axios';
+
+/////////////////// export du composant ///////////////////
+
 export default {
 
     name: 'HomeView',
 
-    // state initial
+    components: {
+        // définir les composants utilisés dans le template
+    },
+
+ /////////////////// state local ///////////////////
+
     data () {
         return {
             info : "",
@@ -53,42 +66,54 @@ export default {
             password: '',
         }
     },
+    /////////////////// méthodes ///////////////////
+
     methods : {
-        registerUser () { this.$store.dispatch('registerUser', this.getFormDatas) },
+        register () { 
+            this.$store.dispatch('registerUser', this.getFormDatas) 
+        },
     },
-    // donnés calculées
+   
+    /////////////////// computed ///////////////////
+
     computed : {
-        // récupère les données du formulaire et les renvoie au store
-        getFormDatas () { return { username: this.username, email: this.email, password: this.password } },
+        getFormDatas () { 
+            return { username: this.username, email: this.email, password: this.password } 
+        },
     },
-    // lifecycle hooks dans l'ordre d'exécution
+    
+    /////////////////// lifecycle hooks dans l'ordre d'exécution  ///////////////////
+
+
     beforeCreate () {
-        console.log('beforeCreate')
+        // console.log('beforeCreate')
     },
     created () {
-        console.log('created')
+        // console.log('created')
     },
     beforeMount () {
-        console.log('beforeMount')
+        // console.log('beforeMount')
     },
     // appelé à l'initialisation du composant
     mounted () {
-        console.log('mounted')
+        // console.log('mounted')
+
+        document.title = "Accueil";
         this.users = this.$store.dispatch('fetchUsers');
     },
     beforeUpdate () {
-        console.log('beforeUpdate')
+        // console.log('beforeUpdate')
         this.info = this.$store.state.users.length + " utilisateurs inscrits";
     },
     // appelé à chaque action sur le composant
     updated () {
-        console.log('updated') 
+        // console.log('updated') 
     },
     beforeDestroy () {
-        console.log('beforeDestroy')
+        // console.log('beforeDestroy')
     },
     destroyed () {
-        console.log('destroyed') 
+        // console.log('destroyed') 
     },
 
 }

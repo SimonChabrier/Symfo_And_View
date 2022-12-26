@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Création de compte{% endblock %}
 
 {% block body %}
 <div class= "pageContent">
@@ -9,7 +9,7 @@
             <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
         {% endfor %}
 
-        <h1>Register</h1>
+        <h1>Création de compte</h1>
 
         {{ form_start(registrationForm, {'attr': {'class' : "registerForm--content"}}) }}
 
@@ -18,7 +18,7 @@
             {{ form_row(registrationForm.plainPassword, {'label': 'password', 'attr': {'class' : "registerForm--label"} }) }}
             {{ form_row(registrationForm.agreeTerms, {'attr': {'class' : "registerForm--label"}}) }}
             
-            <button type="submit" class="btn">Register</button>
+            <button type="submit" class="btn">Valider</button>
         {{ form_end(registrationForm) }}
     </div>
 </div>

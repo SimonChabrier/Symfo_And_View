@@ -1,1 +1,0 @@
-Dossier et hello_controller crée par défaut à l'intall de webpack dans symfony.

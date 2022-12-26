@@ -57,8 +57,8 @@
 
 <!-- This App custom CSS -->
 {% block stylesheets %}
-<link rel="stylesheet" href="{{ asset('assets/css/reset.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+{# <link rel="stylesheet" href="{{ asset('assets/css/reset.css') }}"> #}
+{# <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}"> #}
 {% endblock %}
 
 <!-- In this App, Google Font are in assets/fonts/poppins for better Google friendly performances 
@@ -76,14 +76,16 @@ use this tool if you need to download and add Google Font locally https://google
 {{ encore_entry_link_tags('app') }}
 {{ encore_entry_script_tags('app') }}
 
-<title>{% block title %}Symfony + Vue{% endblock %}</title>  
+<title>{% block title %}
+{# {{ app.request.attributes.get('_route')|replace({'_': ' '}) }} #}
+{% endblock %}</title>  
 
 </head>
     <body>
         {# {% include '_fragments/_header.html.twig' %} #}
         {% block body %} 
         <div id="app">
-        {# L'appli Vue.js vivra ici #}
+        {# L'appli Vue.js vie ici #}
         </div>
         {% endblock %}
         {# {% include '_fragments/_footer.html.twig' %} #}

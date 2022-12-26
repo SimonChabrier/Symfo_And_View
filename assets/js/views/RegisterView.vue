@@ -1,12 +1,5 @@
 <template>
     <div class="register">
-
-        <div class="info">
-            <h1 v-if="successMessage">{{ successMessage }}</h1>
-            <h1 v-if="errorMessage">{{ errorMessage }}</h1>
-            <p></p>
-        </div>
-
         <form class= "registerForm" action="">
             <label for="username">Nom d'utilisateur</label>
             <input type="text" placeholder="Username" v-model="username">
@@ -20,7 +13,7 @@
             <label for="confirmPassword">Confirmer le mot de passe</label>
             <input type="password" placeholder="Confirm Password" v-model="confirmPassword">
             
-            <input type="submit" value="S'inscrire" @click="submitForm">
+            <input type="submit" value="S'inscrire" @click="register">
             
         </form>
 
@@ -28,55 +21,83 @@
 </template>
 
 <script>
-import axios from 'axios';
+
+/////////////////// import des composants ///////////////////
+
+// import axios from 'axios';
+
+/////////////////// export du composant ///////////////////
+
 export default {
 
     name: 'RegisterView',
 
-    // state
+    components: {
+        // définir les composants utilisés dans le template
+    },
+
+    /////////////////// state local ///////////////////
+
     data () {
         return {
             username: '',
             email: '',
             password: '',
             confirmPassword: '',
-            successMessage: '',
-            errorMessage: ''
         }
     },
+
+    /////////////////// méthodes ///////////////////
+
     methods : {
-        submitForm () {
-            // get data from form
-            let datas = {
+        register () { 
+            this.$store.dispatch('registerUser', this.getFormDatas)
+            this.$router.push({ name: 'home' }) 
+            },
+    },
+
+    /////////////////// computed ///////////////////
+
+    computed: {
+        getFormDatas () {
+            return {
                 username: this.username,
                 email: this.email,
                 password: this.password,
                 confirmPassword: this.confirmPassword
             }
-            this.postData(datas);
-        },
-
-        async postData (datas) {
-
-            // always start with empty messages
-            this.successMessage = '';
-            this.errorMessage = '';
-
-            try {
-                await axios.post('https://127.0.0.1:8000/api/users/register', datas)
-                this.successMessage = 'Votre compte a bien été créé';
-                this.redirect();
-            } catch (error) {
-                this.errorMessage = `${error.message}`;
-            } 
-        },
-        redirect () {
-            setTimeout(() => {
-                this.$router.push({ name: 'home' })
-            }, 2000);
         }
     },
+
+    /////////////////// lifecycle hooks dans l'ordre d'exécution  ///////////////////
+
+    beforeCreate () {
+        // ici je n'ai pas encore accès au store
+    },
+    created () {
+        // console.log('created')
+    },
+    beforeMount () {
+        // console.log('beforeMount')   
+    },
+    mounted () {
+        // console.log('mounted')
+        document.title = "Register";
+    },
+    beforeUpdate () {
+        // console.log('beforeUpdate')
+    },
+    updated () {
+        // console.log('updated') 
+    },
+    beforeDestroy () {
+        // console.log('beforeDestroy')
+    },
+    destroyed () {
+        // console.log('destroyed') 
+    },
 }
+
 </script>
 
 <style lang="scss" scoped>

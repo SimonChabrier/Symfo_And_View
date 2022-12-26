@@ -43,22 +43,30 @@
 
 <script>
 
+/////////////////// import des composants ///////////////////
+
 import utils from '@utils/utils.js';
+
+/////////////////// export du composant ///////////////////
 
 export default {
 
     name: 'UserView',
 
-    // state
+    /////////////////// state local ///////////////////
+
     data () {
         return {
-         //
+            //
         }
     },
+
+    /////////////////// méthodes ///////////////////
+
     methods: {
         // formatDate accèssible depuis l'import d'utils.js
         // la clé 'date' est utilisée dans le template
-        // elle contient maintenant la fonction formatDate de l'ojet utils
+        // elle contient maintenant la méthode formatDate de l'ojet utils
         date: utils.formatFrenchDate,
         time: utils.formatTime,
         
@@ -68,34 +76,41 @@ export default {
         },
     },
 
-    // lifecycle hooks dans l'ordre d'exécution
+
+
+    /////////////////// lifecycle hooks dans l'ordre d'exécution  ///////////////////
+
     beforeCreate () {
-        console.log('beforeCreate')
+        // console.log('beforeCreate')
+        // ici je n'ai pas encore accès au store
     },
     created () {
-        console.log('created')
+        // ici je peux accéder au store
+        // console.log('created')
     },
     beforeMount () {
-        console.log('beforeMount')
+        // console.log('beforeMount')
+        
     },
-    // import du user depuis store par son id
     mounted () {
-        console.log('mounted')
+        // console.log('mounted')
         this.$store.dispatch('fetchUser', this.$route.params.id)
+        document.title = "User profile"
     },
     beforeUpdate () {
-        console.log('beforeUpdate')
+        // console.log('beforeUpdate')
     },
     updated () {
-        console.log('updated') 
+        // console.log('updated') 
     },
     beforeDestroy () {
-        console.log('beforeDestroy')
+        // console.log('beforeDestroy')
     },
     destroyed () {
-        console.log('destroyed') 
+        // console.log('destroyed') 
     },
 }
+
 </script>
 
 <style lang="scss" scoped>
