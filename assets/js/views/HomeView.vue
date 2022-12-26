@@ -1,5 +1,10 @@
 <template>
-    <meta name="author" content="Aurélien">
+
+    <div class="last" v-if="lastUser.username">
+        <span>
+            Dernier utilisateur inscrit : {{ lastUser.username }}
+        </span>
+    </div>
 
     <div class="home">
         <h1 class="title">{{ info }} </h1>
@@ -16,12 +21,6 @@
 
     </div>
 
-    <div class="last" v-if="lastUser.username">
-        <span>
-            Dernier utilisateur inscrit : {{ lastUser.username }}
-        </span>
-    </div>
-
 <div class="register" @submit.prevent="register">
     <form class= "registerForm">
         <label for="username">Nom d'utilisateur</label>
@@ -33,7 +32,10 @@
         <label for="password">Mot de passe</label>
         <input type="password" placeholder="Password" v-model="password">
       
-        <button-component @click="''" :text="'inscription'" :color="'red'">
+        <button-component 
+            @click="''" 
+            :text="'inscription'" 
+            :color="'red'">
         </button-component>
     </form>
 </div>  
