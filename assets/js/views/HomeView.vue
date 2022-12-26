@@ -46,6 +46,7 @@
         <div class="item" v-for="user in $store.state.allUsers" :key="user.id">
             <!-- router link pour lier chaque user à son profil -->
             <router-link :to="{ name: 'user', params: { id: user.id }}">
+                <!-- user.message est retourné en réponse JSON par l'api à la suppression -->
                 <span v-if="!user.message">
                     {{ user.username }} 
                 </span>
