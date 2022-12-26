@@ -9,6 +9,7 @@ export default createStore ({
     deleteMessage: '',
     users: [],
     user: {},
+    searchUsers : []
   },
 
   // les getters permettent de récupérer des données du state dans son contexte et son état actuel
@@ -23,7 +24,7 @@ export default createStore ({
 
   // les mutations permettent de modifier le state de manière synchrone
   mutations: {
-    
+
     // Gestion des users
     setUsers(state, users) {
       state.users = users;
@@ -32,6 +33,10 @@ export default createStore ({
       state.user = user;
       state.users.push(user);
     },
+    setSearchUsers(state, results) {
+      state.searchUsers = results;
+    },
+
     confirmDelete(state, message) {
       state.deleteMessage = message;
     },
@@ -84,8 +89,18 @@ export default createStore ({
       const response = (await axios.post (API_ROOT_URL + '/register', user)).data
       context.commit('setUser', response);
       context.commit('incrementCount');
-      console.log(response);
     },
+    
+    searchUser(context, search) {
+
+      if(search.length > 3) {
+      const results = context.state.users.filter(user => user.username.toLowerCase().includes(search.toLowerCase()));
+      context.commit('setSearchUsers', results);
+      } else {
+        const results = '';
+        context.commit('setSearchUsers', results);
+      }
+    }
 
    
   },
