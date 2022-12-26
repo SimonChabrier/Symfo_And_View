@@ -83,13 +83,10 @@ export default createStore ({
       // supprimer l'utilisateur supprimé si il est dans le tableau des résultats de recherche
       const searchUsers = context.state.searchUsers.filter(user => user.id !== id);
       context.commit('setSearchUsers', searchUsers);
+      // met à jour le tableau des users
+      context.dispatch('fetchUsers');
     },
 
-    // retirer chaque user supprimé du tableau users pour garder la liste à jour dans le composant HomeView
-    removeDeletedUserFromUsers(context, id) {
-      const users = context.state.allUsers.filter(user => user.id !== id);
-      context.commit('setUsers', users);
-    },
     // enregistrer un nouveau user
     async registerUser(context, user) {
       const response = (await axios.post (API_ROOT_URL + '/register', user)).data

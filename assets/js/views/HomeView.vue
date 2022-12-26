@@ -87,7 +87,6 @@
 
 // import axios from 'axios';
 import ButtonComponent from '@comp/elements/ButtonComponent.vue'
-import utils from '../utils/utils'
 
 /////////////////// export du composant ///////////////////
 
@@ -120,7 +119,6 @@ export default {
         },
         deleteUser (id) { 
             this.$store.dispatch('deleteUser', id)
-            this.$store.dispatch('removeDeletedUserFromUsers', id)   
         },
         resetForm () { 
             this.username = ''; 
@@ -166,6 +164,7 @@ export default {
     },
     beforeUpdate () {
         //console.log('beforeUpdate')
+        
     },
     // appelé à chaque action sur le composant
     updated () {
