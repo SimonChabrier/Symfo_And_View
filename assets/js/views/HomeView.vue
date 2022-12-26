@@ -224,20 +224,6 @@ export default {
     justify-content: flex-end;
 }
 
-.deleteMessage {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: $gutter-big;
-    margin: 0 0 $gutter-big 0;
-    background-color: $green;
-    position: relative;
-
-    & span {
-        color: $lightWhite;
-    }
-}
-
 .close {
     position: absolute;
     top: 10px;
@@ -291,11 +277,12 @@ label {
     justify-content: center;
     align-items: center;
     padding: $gutter-big;
-    margin: $gutter-big 0;
+    margin: 0 0 $gutter-big 0;
     background-color: $green;
 
     & span {
         color: $lightWhite;
+        width: 80%;
     }
 }
 
@@ -312,6 +299,21 @@ label {
 
     & span {
         color: $lightWhite;
+        width: 80%;
+    }
+}
+.deleteMessage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: $gutter-big;
+    margin: 0 0 $gutter-big 0;
+    background-color: $green;
+    position: relative;
+
+    & span {
+        color: $lightWhite;
+        width: 80%;
     }
 }
 

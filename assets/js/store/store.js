@@ -36,7 +36,6 @@ export default createStore ({
     setSearchUsers(state, results) {
       state.searchUsers = results;
     },
-
     confirmDelete(state, message) {
       state.deleteMessage = message;
     },
@@ -58,7 +57,7 @@ export default createStore ({
   // les actions permettent d'appeler des mutations de manière asynchrone
   actions: {
     
-    // fecth tout les users
+    // fecth l'ensemble des users en BDD
     async fetchUsers(context) {
       const response = (await axios.get (API_ROOT_URL)).data
       context.commit('setUsers', response);
@@ -97,9 +96,8 @@ export default createStore ({
       context.commit('setUser', response);
       context.commit('incrementCount');
     },
-    
+    // cherche dans le tableau des users
     searchUser(context, search) {
-
       if(search.length > 0) {
       const results = context.state.allUsers.filter(user => user.username.toLowerCase().includes(search.toLowerCase()));
       context.commit('setSearchUsers', results);
@@ -112,9 +110,30 @@ export default createStore ({
    
   },
 
-  // les modules permettent de découper le store en plusieurs fichiers
-  modules: {
-    // module1: module1,
-  },
+  // les modules permettent de découper le store en plusieurs parties
+  // https://vuex.vuejs.org/guide/modules.html
+
+  // const moduleA = {
+  //   state: () => ({ ... }),
+  //   mutations: { ... },
+  //   actions: { ... },
+  //   getters: { ... }
+  // }
+  
+  // const moduleB = {
+  //   state: () => ({ ... }),
+  //   mutations: { ... },
+  //   actions: { ... }
+  // }
+  
+  // const store = createStore({
+  //   modules: {
+  //     a: moduleA,
+  //     b: moduleB
+  //   }
+  // })
+  
+  // store.state.a // -> `moduleA`'s state
+  // store.state.b // -> `moduleB`'s state
 
 })
