@@ -26,6 +26,9 @@ export default createStore ({
     },
     setUser(state, user) {
       state.user = user;
+      // j'ajoute aussi le user dans le tableau users pour que la liste soit mise à jour dans le composant HomeView
+      // je pourrais aussi poster sur l'API le dernier user du tableau users...
+      state.users.push(user);
     }
   },
 

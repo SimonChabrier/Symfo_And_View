@@ -20,10 +20,18 @@ export default {
 
   data() {
     return {
-      // définir les données ici si nécessaire
+      // définir le state initial si besoin
+      // message : "Hello World"
     }
+  },
+
+  mounted () {
+    // import des users dans le store 
+    // pour pouvoir boucler dessus dans les templates
+    
   }
 }
+
 
 </script>
   

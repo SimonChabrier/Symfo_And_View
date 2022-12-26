@@ -2,41 +2,40 @@
     <div class="user">
         <ol>
             <li>
-                Profil de : {{ user.username }}
+                Profil de : {{ $store.state.user.username }}
             </li>
             <li>
-                User ID: {{ user.id }}
+                Email : {{ $store.state.user.email }}
             </li>
             <li>
-                Email : {{ user.email }}
+                Id: {{ $store.state.user.id }}
             </li>
-            <li v-for="role in user.roles" :key="role">
-                Rôle : {{ role }}
-            </li>
-            <li>
-                Slug : {{ user.slug }}
+            <li v-for="role in $store.state.user.roles" :key="role">
+                Roles: {{ role }}
             </li>
             <li>
-                Utilisateur vérifié : {{ user.isVerified === true ? 'oui' : 'non' }}
+                Utilisateur vérifié : {{ $store.state.user.isVerified === true ? 'oui' : 'non' }}
             </li>
             <li>
-                Utilisateur actif : {{ user.status === true ? 'oui' : 'non' }}
+                Utilisateur actif : {{ $store.state.user.status === true ? 'oui' : 'non' }}
             </li>
             <li>
-                Crée le : {{ date(user.createdAt) }}
+                Crée le : {{ date($store.state.user.createdAt) }}
             </li>
             <li>
-                A : {{ time(user.createdAt) }}
+                A : {{ time($store.state.user.createdAt) }}
             </li>
             <li>
-                Modifié le : {{ date(user.updateAt) }}
+                Modifié le : {{ date($store.state.user.updateAt) }}
             </li>
             <li>
-                A : {{ time(user.updateAt) }}
+                A : {{ time($store.state.user.updateAt) }}
             </li>
             <!-- delete user button -->
             <li>
-                <input type="submit" value="Supprimer" @click="deleteUser(user.id)">
+                <div>
+                    <input type="submit" value="Supprimer" @click.prevent="deleteUser">
+                </div>
             </li>
         </ol>
     </div>
@@ -53,27 +52,49 @@ export default {
     // state
     data () {
         return {
-            user: {}
+         //
         }
     },
     methods: {
-        deleteUser (id) {
-            this.$store.dispatch('deleteUser', id)
-            .then(() => {
-                this.$router.push({ name: 'home' })
-            })
-        },
         // formatDate accèssible depuis l'import d'utils.js
         // la clé 'date' est utilisée dans le template
         // elle contient maintenant la fonction formatDate de l'ojet utils
         date: utils.formatFrenchDate,
-        time: utils.formatTime
+        time: utils.formatTime,
+        
+        async deleteUser () {   
+            await this.$store.dispatch('deleteUser', this.$route.params.id)
+            this.$router.push({ name: 'home' })
+        },
+    },
+
+    // lifecycle hooks dans l'ordre d'exécution
+    beforeCreate () {
+        console.log('beforeCreate')
+    },
+    created () {
+        console.log('created')
+    },
+    beforeMount () {
+        console.log('beforeMount')
     },
     // import du user depuis store par son id
     mounted () {
+        console.log('mounted')
         this.$store.dispatch('fetchUser', this.$route.params.id)
-        .then(() => { this.user = this.$store.state.user, console.log(this.user)})
-    }
+    },
+    beforeUpdate () {
+        console.log('beforeUpdate')
+    },
+    updated () {
+        console.log('updated') 
+    },
+    beforeDestroy () {
+        console.log('beforeDestroy')
+    },
+    destroyed () {
+        console.log('destroyed') 
+    },
 }
 </script>
 
@@ -99,7 +120,7 @@ input[type="submit"] {
     width: 100px;
     height: 40px;
     background-color: $red;
-    margin : $gutter-medium 0 0 0;
+    margin : $gutter-medium 0 $gutter-medium 0;
     color: $lightWhite;
     border: none;
     border-radius: 5px;

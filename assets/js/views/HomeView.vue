@@ -3,17 +3,23 @@
         <h1 class="title">{{ info }} </h1>
         <!-- liste des users -->
         <ul>
-            <li v-for="user in users" :key="user.id">
-               <!-- router view pour lier chaque user à son profil -->
-                <router-link :to="{ name: 'user', params: { id: user.id }}">
-                    {{ user.username }}
+            <li v-for="user in $store.state.users" :key="user.id"><!-- boucle directement sur le store -->
+                <router-link :to="{ name: 'user', params: { id: user.id }}"><!-- router link pour lier chaque user à son profil -->
+                    {{ user.username }} 
                 </router-link>
+                <!-- delete button -->
             </li>
         </ul>
     </div>
 
+    <div class="last" v-if="lastUser.username">
+        <span>
+            Dernier utilisateur inscrit : {{ lastUser.username }}
+        </span>
+    </div>
+
 <div class="register">
-    <form class= "registerForm" action="">
+    <form class= "registerForm" @submit.prevent="registerUser">
         <label for="username">Nom d'utilisateur</label>
         <input type="text" placeholder="Username" v-model="username">
         
@@ -23,7 +29,7 @@
         <label for="password">Mot de passe</label>
         <input type="password" placeholder="Password" v-model="password">
       
-        <input type="submit" value="S'inscrire" @click="submitForm">
+        <input type="submit" value="S'inscrire">
     </form>
 </div>  
 
@@ -35,49 +41,55 @@ export default {
 
     name: 'HomeView',
 
-    // state
+    // state initial
     data () {
         return {
             info : "",
+            "count": '',
             users: [],
-            "count": 0,
+            lastUser: {}, 
             username: '',
             email: '',
             password: '',
         }
     },
     methods : {
-        submitForm () {
-            // get data from form
-            let datas = {
-                username: this.username,
-                email: this.email,
-                password: this.password,
-            }
-            this.$store.dispatch('registerUser', datas)
-            // refresh de la liste des users
-            .then(() => {
-                this.users = this.$store.dispatch('fetchUsers');
-            })
-        },
+        registerUser () { this.$store.dispatch('registerUser', this.getFormDatas) },
     },
+    // donnés calculées
     computed : {
-        // refresh de la liste des users
-        users () {
-            return this.$store.state.users;
-        }
-
+        // récupère les données du formulaire et les renvoie au store
+        getFormDatas () { return { username: this.username, email: this.email, password: this.password } },
     },
-    // imort des users depuis le store
+    // lifecycle hooks dans l'ordre d'exécution
+    beforeCreate () {
+        console.log('beforeCreate')
+    },
+    created () {
+        console.log('created')
+    },
+    beforeMount () {
+        console.log('beforeMount')
+    },
+    // appelé à l'initialisation du composant
     mounted () {
-        this.$store.dispatch('fetchUsers')
-        .then(() => {
-            this.users = this.$store.state.users;
-            this.count = this.users.length;
-            this.count === 0 || this.count === 1 ? this.info = `${this.count} utilisateur en BDD` : '';
-            this.count > 1 ? this.info = `${this.count} utilisateurs en BDD` : '';
-        })
-    }
+        console.log('mounted')
+        this.users = this.$store.dispatch('fetchUsers');
+    },
+    beforeUpdate () {
+        console.log('beforeUpdate')
+        this.info = this.$store.state.users.length + " utilisateurs inscrits";
+    },
+    // appelé à chaque action sur le composant
+    updated () {
+        console.log('updated') 
+    },
+    beforeDestroy () {
+        console.log('beforeDestroy')
+    },
+    destroyed () {
+        console.log('destroyed') 
+    },
 
 }
 
@@ -155,6 +167,19 @@ input[type="submit"] {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.last {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: $gutter-big;
+    margin: $gutter-big 0;
+    background-color: $green;
+
+    & span {
+        color: $lightWhite;
+    }
 }
 
 </style>

@@ -20,8 +20,10 @@ const routes = [
     component: RegisterView
   },
   // voir un utilisateur en base de données par son id
+  // on laisse le paramètre id optionnel :id? pour pouvoir afficher un message d'erreur si l'id n'est pas trouvé
+  // et pour ne pas avoir d'erreur sur les redirection si on delete un user car il n'y a plus d'id dans l'url...
   {
-    path: '/user/:id',
+    path: '/user/:id?',
     name: 'user',
     component: UserView
     },
