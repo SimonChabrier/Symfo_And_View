@@ -134,7 +134,10 @@ class ApiUserController extends AbstractController
         $doctrine->flush();
 
         return $this->json(
-            ['message' => 'Utilisateur supprimé'],
+            [
+                'message' => 'Utilisateur supprimé', 
+                'username' => $user->getUserIdentifier(),
+            ],
             Response::HTTP_OK,
             [],
             ['groups' => ['user:read']]

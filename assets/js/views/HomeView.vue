@@ -1,24 +1,44 @@
 <template>
 
-    <div class="last" v-if="lastUser.username">
+    <div class="home">
+        <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }} </h1>
+        
+        <!-- liste des users -->
+        <div class="users">
+            <div class="item" v-for="user in $store.state.users" :key="user.id">
+                <!-- router link pour lier chaque user à son profil -->
+                <router-link :to="{ name: 'user', params: { id: user.id }}">
+                    <span v-if="!user.message">
+                        {{ user.username }} 
+                    </span>
+                </router-link>
+                    
+                <button aria-label='delete item' v-if="!user.message" 
+                    @click = " deleteUser(user.id) " 
+                    type='button'> X
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="deleteMessage" v-if="$store.state.deleteMessage">
+        <button class="close" aria-label='close message'
+            @click = "closeDeleteMessage()" 
+            type='button'> X
+        </button>
         <span>
-            Dernier utilisateur inscrit : {{ lastUser.username }}
+            {{ $store.state.deleteMessage }}
         </span>
     </div>
 
-    <div class="home">
-        <h1 class="title">{{ info }} </h1>
-        
-        <!-- liste des users -->
-        <ul>
-            <li v-for="user in $store.state.users" :key="user.id"><!-- boucle directement sur le store -->
-                <router-link :to="{ name: 'user', params: { id: user.id }}"><!-- router link pour lier chaque user à son profil -->
-                    {{ user.username }} 
-                </router-link>
-                <!-- delete button -->
-            </li>
-        </ul>
-
+    <div class="last" v-if="lastUser.username">
+        <button class="close" aria-label='close message'
+            @click = "closeNewUserCreatedMessage()" 
+            type='button'> X
+        </button>
+        <span>
+            Dernier utilisateur inscrit : {{ lastUser.username }}
+        </span>
     </div>
 
 <div class="register" @submit.prevent="register">
@@ -48,6 +68,7 @@
 
 // import axios from 'axios';
 import ButtonComponent from '@comp/elements/ButtonComponent.vue'
+import utils from '../utils/utils'
 
 /////////////////// export du composant ///////////////////
 
@@ -63,9 +84,6 @@ export default {
 
     data () {
         return {
-            info : "",
-            "count": '',
-            users: [],
             lastUser: {}, 
             username: '',
             email: '',
@@ -77,6 +95,23 @@ export default {
     methods : {
         register () { 
             this.$store.dispatch('registerUser', this.getFormDatas) 
+            this.resetForm()
+            this.lastUser = this.$store.state.users[this.$store.state.users.length - 1];
+        },
+        deleteUser (id) { 
+            this.$store.dispatch('deleteUser', id)
+            this.$store.dispatch('removeDeletedUserFromUsers', id)   
+        },
+        resetForm () { 
+            this.username = ''; 
+            this.email = ''; 
+            this.password = ''; 
+        },
+        closeDeleteMessage () { 
+            this.$store.state.deleteMessage = false
+        },
+        closeNewUserCreatedMessage () { 
+            this.lastUser = {}
         },
     },
    
@@ -104,16 +139,14 @@ export default {
     mounted () {
         // console.log('mounted')
         document.title = "Accueil";
-        this.users = this.$store.dispatch('fetchUsers');
+        this.$store.dispatch('fetchUsers')
     },
     beforeUpdate () {
-        // console.log('beforeUpdate')
-        this.info = this.$store.state.users.length + " utilisateurs inscrits";
+        //console.log('beforeUpdate')
     },
     // appelé à chaque action sur le composant
     updated () {
         // console.log('updated') 
-        this.lastUser = this.$store.state.user;
     },
     beforeDestroy () {
         // console.log('beforeDestroy')
@@ -142,7 +175,7 @@ export default {
         font-size: large;
         font-size: 1.5rem;
         color: $lightWhite;
-        margin-bottom: $gutter-small;
+        margin-bottom: $gutter-medium;
     }
 
     & ul, li {
@@ -152,12 +185,51 @@ export default {
     }
 }
 
+.users {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.deleteMessage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: $gutter-big;
+    margin: $gutter-big 0;
+    background-color: $green;
+    position: relative;
+
+    & span {
+        color: $lightWhite;
+    }
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    padding: $gutter-small;
+    border: none;
+    background-color: transparent;
+    color: $lightWhite;
+    font-size: 1rem;
+}
+
 .register {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: $gutter-big;
     margin: $gutter-big 0;
     background-color: $mediumBlue;
 }
@@ -170,7 +242,7 @@ export default {
     padding: $gutter-big;
     margin: $gutter-big 0;
     gap: $gutter-small;
-    width: 80%;
+    width: 100%;
 }
 
 input {
@@ -190,6 +262,7 @@ label {
 }
 
 .last {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;

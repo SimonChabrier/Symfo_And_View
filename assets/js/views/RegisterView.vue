@@ -112,7 +112,6 @@ h1 {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: $gutter-big;
     margin: $gutter-big 0;
     background-color: $mediumBlue;
 }
@@ -125,7 +124,7 @@ h1 {
     padding: $gutter-big;
     margin: $gutter-big 0;
     gap: $gutter-small;
-    width: 80%;
+    width: 100%;
 }
 
 input {
