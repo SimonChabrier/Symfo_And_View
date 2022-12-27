@@ -136,7 +136,7 @@ class ApiUserController extends AbstractController
         return $this->json(
             [
                 'message' => 'Utilisateur supprimé', 
-                'username' => $user->getUserName(),
+                'username' => $user->getUserIdentifier(),
             ],
             Response::HTTP_OK,
             [],
@@ -187,7 +187,7 @@ class ApiUserController extends AbstractController
      * Permet de se connecter
      * @Route("/api/login", name="api.login", methods={"POST"})
      */
-    public function apiLogin(Request $request): Response
+    public function apiLogin(Request $request, UserRepository $userRepository): Response
     {   
             // Format de donnée attendu
             // {
@@ -195,12 +195,29 @@ class ApiUserController extends AbstractController
             //     "password": "userpassword"
             // }
 
-        $user = $this->getUser();
+        // init jwt token
 
-        return $this->json([
-            'username' => $user->getUserIdentifier(),
-            'roles' => $user->getRoles(),
-        ]);
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        // find user by username
+        $user = $userRepository->findOneBy(['username' => $data['username']]);
+
+        if (!$user) {
+            return new JsonResponse(['message' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
+        }
+        if (!password_verify($data['password'], $user->getPassword())) {
+            return new JsonResponse(['message' => 'Mot de passe incorrect'], Response::HTTP_UNAUTHORIZED);
+        }
+        // TODO ajouter Jwt token et revenir sur cette méthode pour la finaliser.
+        // generate jwt token
+
+        return $this->json(
+            $user,
+            Response::HTTP_OK,
+            [],
+            []
+        );
     }
 
     /**

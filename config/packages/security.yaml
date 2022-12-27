@@ -1,49 +1,85 @@
 security:
     enable_authenticator_manager: true
-    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
-    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+        App\Entity\User:
+            algorithm: auto
+
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             entity:
                 class: App\Entity\User
-                property: email
+                property: username
+                # JSON LOGIN
+                # property: username 
+                          
     firewalls:
+        login:
+            pattern: ^/api/login
+            stateless: true
+            #provider: app_user_provider
+            #custom_authenticator: App\Security\ApiKeyAuthenticator
+            json_login:
+                check_path: /api/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        
+        # partie secure de l'API
+        api_secure:
+           pattern:   ^/api/users
+           stateless: true
+           jwt: ~  
+
+        # partie publique de mon api
+        api:
+            pattern:   ^/api
+            stateless: true
+            jwt: ~
+
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         main:
             lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\UserLoginAuthenticator
-            json_login:
-                check_path: /api/login
             logout:
                 path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
+                # Redirection après logout
+                target: app.home
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
             # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
+            # pour switcher mettre à la fin de l'url à tester: ?_switch_user=mailatester@mail.fr
+            # pour mettre fin au switch ajouter à la fin de l'url en test: ?_switch_user=_exit
+            switch_user: true
 
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
+            # ^ début de l'url
+            # /back pour limiter au backoffice
+            # [^/] tout ce qui n'est pas un / (=> le nom du modèle peut importe le model)
+            # + 1 ou plusieurs fois le caractère précédente
+            # / le slash
+            # \d+ un nombre
+            # $ fin de l'url
+
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+          - { path: ^/api/login, roles: PUBLIC_ACCESS }
+          - { path: ^/api/users/register, roles: PUBLIC_ACCESS }
+          - { path: ^/api/users$, roles: PUBLIC_ACCESS }
+          - { path: ^/api/users/delete/\d+, roles: IS_AUTHENTICATED_FULLY }
+
+    role_hierarchy:
+        # ROLE_ADMIN: [ROLE_MANAGER, ROLE_ALLOWED_TO_SWITCH]
+        # ROLE_MANAGER: ROLE_USER
+        # ROLE_USER: ROLE_TEST
 
 when@test:
     security:
         password_hashers:
-            # By default, password hashers are resource intensive and take time. This is
-            # important to generate secure password hashes. In tests however, secure hashes
-            # are not important, waste resources and increase test times. The following
-            # reduces the work factor to the lowest possible values.
             Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
                 algorithm: auto
                 cost: 4 # Lowest possible value for bcrypt
