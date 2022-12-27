@@ -7,19 +7,26 @@ security:
             algorithm: auto
 
     providers:
+
         app_user_provider:
             entity:
                 class: App\Entity\User
-                property: username
+                property: email
                 # JSON LOGIN
-                # property: username 
+                # property: username
+        
+        api_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
                           
     firewalls:
         login:
             pattern: ^/api/login
             stateless: true
-            #provider: app_user_provider
-            #custom_authenticator: App\Security\ApiKeyAuthenticator
+            provider: api_user_provider
+            custom_authenticator: App\Security\ApiKeyAuthenticator
+            
             json_login:
                 check_path: /api/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
@@ -29,12 +36,15 @@ security:
         api_secure:
            pattern:   ^/api/users
            stateless: true
+           provider: api_user_provider
            jwt: ~  
+           
 
         # partie publique de mon api
         api:
             pattern:   ^/api
             stateless: true
+            provider: api_user_provider
             jwt: ~
 
         dev:
