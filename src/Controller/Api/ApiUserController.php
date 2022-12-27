@@ -201,7 +201,7 @@ class ApiUserController extends AbstractController
         $data = json_decode($data, true);
 
         // find user by username
-        $user = $userRepository->findOneBy(['email' => $data['username']]);
+        $user = $userRepository->findOneBy(['username' => $data['username']]);
 
         if (!$user) {
             return new JsonResponse(['message' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
