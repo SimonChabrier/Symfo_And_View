@@ -199,31 +199,23 @@ class ApiUserController extends AbstractController
             //     "password": "userpassword"
             // }
 
-        $data = $request->getContent();
-        $data = json_decode($data, true);
-
-        // find user by username
+        $data = json_decode($request->getContent(), true);
+        
         $user = $userRepository->findOneBy(['username' => $data['username']]);
 
         if (!$user) {
             return new JsonResponse(['message' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
         }
+
         if (!password_verify($data['password'], $user->getPassword())) {
             return new JsonResponse(['message' => 'Mot de passe incorrect'], Response::HTTP_UNAUTHORIZED);
         }
-
-        // token JWT
-        // $token = $this->tokenGenerator->generateToken($user);
-        // dd($token);
-
         
         return $this->json(
             $user,
             Response::HTTP_OK,
             [],
-            [
-                'groups' => ['user:read'],
-            ]
+            ['groups' => ['user:read']]
         );
     }
 }

@@ -42,6 +42,10 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {   
         dd('success');
+        // return bearer token
+
+        
+
         // on success, let the request continue
         return null;
     }

@@ -12,8 +12,6 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
-                # JSON LOGIN
-                # property: username
         
         api_user_provider:
             entity:
@@ -21,31 +19,32 @@ security:
                 property: username
                           
     firewalls:
+    
         login:
             pattern: ^/api/login
             stateless: true
             provider: api_user_provider
-            custom_authenticator: App\Security\ApiKeyAuthenticator
+            #custom_authenticator: App\Security\ApiKeyAuthenticator
             
             json_login:
                 check_path: /api/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-        
-        # partie secure de l'API
-        api_secure:
-           pattern:   ^/api/users
-           stateless: true
-           provider: api_user_provider
-           jwt: ~  
-           
 
-        # partie publique de mon api
-        api:
-            pattern:   ^/api
-            stateless: true
-            provider: api_user_provider
-            jwt: ~
+        
+        # # partie secure de l'API
+        # api_secure:
+        #    pattern:   ^/api/users
+        #    stateless: true
+        #    provider: api_user_provider
+        #    jwt: ~  
+           
+        # # partie publique de mon api
+        # api:
+        #     pattern:   ^/api
+        #     stateless: true
+        #     provider: api_user_provider
+        #     jwt: ~
 
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
