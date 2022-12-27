@@ -18,7 +18,7 @@ security:
         api_user_provider:
             entity:
                 class: App\Entity\User
-                property: email
+                property: username
                           
     firewalls:
         login:

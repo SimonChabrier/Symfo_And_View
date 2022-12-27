@@ -1,7 +1,9 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
+import authServices from '@sevices/auth.service.js'
 
 const API_ROOT_URL = 'https://127.0.0.1:8000/api/users'
+
 
 export default createStore ({
   state: {
@@ -9,7 +11,8 @@ export default createStore ({
     deleteMessage: '',
     allUsers: [],
     user: {},
-    searchUsers : []
+    searchUsers : [],
+    loggedIn: false,
   },
 
   // les getters permettent de récupérer des données du state dans son contexte et son état actuel
@@ -57,23 +60,35 @@ export default createStore ({
   // les actions permettent d'appeler des mutations de manière asynchrone
   actions: {
     
-    // fecth l'ensemble des users en BDD
+    // récupérer les utilisateur 
+    // actuellement route API publique => pas besoin de token
+    // mais si je veux la sécuriser le token est ici dans le header..
     async fetchUsers(context) {
-      const response = (await axios.get (API_ROOT_URL)).data
+      const headers = authServices.checkAuth();
+      const response = (await axios.get (API_ROOT_URL, { headers })).data
       context.commit('setUsers', response);
       context.commit('setCount', response.length);
+      // set loggedIn to true if token exists
+      if(authServices.checkToken()) {
+        context.state.loggedIn = true;
+      }
     },
-
+ 
     // fetch un user par son id
+    // actuellement route API publique => pas besoin de token
+    // mais si je veux la sécuriser le token est ici dans le header..
     async fetchUser(context, id) {
-      const response = (await axios.get (API_ROOT_URL + '/' + id)).data
+      const headers = authServices.checkAuth();
+      const response = (await axios.get (API_ROOT_URL + '/' + id, { headers })).data
       context.commit('setUser', response);
     },
 
     // delete un user par son id
+    // actuellement route API sécurisée qui demande le Token
     async deleteUser(context, id) {
+      const headers = authServices.checkAuth();
       // supprime l'utilisateur de la base de données
-      const response = (await axios.delete (API_ROOT_URL + '/' + id)).data
+      const response = (await axios.delete (API_ROOT_URL + '/delete/' + id, { headers })).data
       // met à jour le compteur de users ne enlevant 1
       context.commit('decrementCount');
       // retourne un message de confirmation
@@ -91,6 +106,7 @@ export default createStore ({
       context.commit('setUser', response);
       context.commit('incrementCount');
     },
+    
     // cherche dans le tableau des users
     searchUser(context, search) {
       if(search.length > 0) {

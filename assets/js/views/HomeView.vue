@@ -18,6 +18,10 @@
     </div>
 </div>
 
+<div class="login">
+    <LoginFormComponent />
+</div>
+
 <div class="deleteMessage" v-if="$store.state.deleteMessage">
     <button class="close" aria-label='close message'
         @click = "closeDeleteMessage()" 
@@ -38,6 +42,8 @@
     </span>
 </div>
 
+
+
 <div class="home">
     <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }} </h1>
     
@@ -50,16 +56,22 @@
                     {{ user.username }} 
                 </span>
             </router-link>
-                
-            <button aria-label='delete item' 
-                @click = " deleteUser(user.id) " 
-                type='button'> X
-            </button>
+             <div v-if="$store.state.loggedIn">  
+                <button aria-label='delete item' 
+                    @click = " deleteUser(user.id) " 
+                    type='button'> X
+                </button>
+            </div> 
         </div>
     </div>
 </div>
 
 <div class="register" @submit.prevent="register">
+        
+    <div class="title">
+        <h1>Inscription</h1>
+    </div>
+
     <form class= "registerForm">
         <label for="username">Nom d'utilisateur</label>
         <input type="text" placeholder="Username" v-model="username">
@@ -69,9 +81,12 @@
         
         <label for="password">Mot de passe</label>
         <input type="password" placeholder="Password" v-model="password">
+
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <input type="password" placeholder="Confirm Password" v-model="confirmPassword">
         
         <button-component 
-            @click="''" 
+            @click="$store.dispatch('fetchUsers')" 
             :text="'inscription'" 
             :color="'red'">
         </button-component>
@@ -86,6 +101,8 @@
 
 // import axios from 'axios';
 import ButtonComponent from '@comp/elements/ButtonComponent.vue'
+import LoginFormComponent from '@comp/LoginFormComponent.vue'
+import authServices from '@sevices/auth.service.js'
 
 /////////////////// export du composant ///////////////////
 
@@ -94,7 +111,8 @@ export default {
     name: 'HomeView',
 
     components: {
-        ButtonComponent
+        ButtonComponent,
+        LoginFormComponent,
     },
 
  /////////////////// state local ///////////////////
@@ -104,7 +122,9 @@ export default {
             username: '',
             email: '',
             password: '',
+            confirmPassword: '',
             search: '',
+            logged: '',
         }
     },
     /////////////////// méthodes ///////////////////
@@ -130,13 +150,14 @@ export default {
         closeNewUserCreatedMessage () { 
             this.$store.state.user = false
         },
+
     },
    
     /////////////////// computed ///////////////////
 
     computed : {
         getFormDatas () { 
-            return { username: this.username, email: this.email, password: this.password } 
+            return { username: this.username, email: this.email, password: this.password, confirmPassword: this.confirmPassword } 
         },
         getSearchDatas () { 
             this.$store.dispatch('searchUser', this.search)
@@ -168,7 +189,6 @@ export default {
     // appelé à chaque action sur le composant
     updated () {
         // console.log('updated') 
-        // console.log(this.$store.state.searchUsers)
     },
     beforeDestroy () {
         // console.log('beforeDestroy')
@@ -231,6 +251,12 @@ export default {
     background-color: transparent;
     color: $lightWhite;
     font-size: 1rem;
+}
+
+.title {
+    font-size: 1.3rem;
+    color: $lightWhite;
+    margin-top: $gutter-big;
 }
 
 .register {
@@ -300,6 +326,7 @@ label {
         width: 80%;
     }
 }
+
 .deleteMessage {
     display: flex;
     justify-content: center;

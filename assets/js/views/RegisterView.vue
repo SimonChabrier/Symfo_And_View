@@ -1,5 +1,10 @@
 <template>
     <div class="register">
+
+        <div class="title">
+            <h1>Inscription</h1>
+        </div>
+        
         <form class= "registerForm" action="">
             <label for="username">Nom d'utilisateur</label>
             <input type="text" placeholder="Username" v-model="username">
@@ -102,11 +107,12 @@ export default {
 
 <style lang="scss" scoped>
 
-h1 {
-    font-size: 24px;
-    font-weight: 200;
-    color: $green;
+.title {
+    font-size: 1.3rem;
+    color: $lightWhite;
+    margin-top: $gutter-big;
 }
+
 .register {
     display: flex;
     flex-direction: column;
