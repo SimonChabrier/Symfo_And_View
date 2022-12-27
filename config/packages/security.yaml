@@ -10,37 +10,40 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\User
+                property: email
+
+        api_user_provider:
+            entity:
+                class: App\Entity\User
                 property: username
-                # JSON LOGIN
-                # property: username 
-                          
+                    
     firewalls:
+        # API  User Json Login no token route 
         login:
             pattern: ^/api/login
             stateless: true
-            #provider: app_user_provider
-            #custom_authenticator: App\Security\ApiKeyAuthenticator
+            provider: api_user_provider
+            
+            # JWT generate Token route
             json_login:
                 check_path: /api/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-        
-        # partie secure de l'API
-        api_secure:
-           pattern:   ^/api/users
+
+        # API firewall
+        api:
+           pattern:   ^/api
            stateless: true
+           provider: api_user_provider
            jwt: ~  
 
-        # partie publique de mon api
-        api:
-            pattern:   ^/api
-            stateless: true
-            jwt: ~
 
+        # Dev firewall
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        # Default main firewal
         main:
             lazy: true
             provider: app_user_provider

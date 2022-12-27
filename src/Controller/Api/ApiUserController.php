@@ -12,12 +12,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+
 class ApiUserController extends AbstractController
 {   
-
 
 //////////////////////////////////////////////* USER CRUD 
 
@@ -123,7 +124,7 @@ class ApiUserController extends AbstractController
 
     /**
      * Supprimer un utilisateur
-     * @Route("/api/users/{id}", name="api.delete.user", methods={"DELETE"})
+     * @Route("/api/users/delete/{id}", name="api.delete.user", methods={"DELETE"})
      */
     public function apiDeleteUser(
         User $user,
@@ -185,6 +186,9 @@ class ApiUserController extends AbstractController
 
     /**
      * Permet de se connecter
+     * Actuellement j'utilise le JWT Token dans vue pour l'Auth ur l'API...
+     * mais cette route permet de réupérer le sinfos complètes d'un user si besoin...
+     * 
      * @Route("/api/login", name="api.login", methods={"POST"})
      */
     public function apiLogin(Request $request, UserRepository $userRepository): Response
@@ -195,39 +199,23 @@ class ApiUserController extends AbstractController
             //     "password": "userpassword"
             // }
 
-        // init jwt token
-
-        $data = $request->getContent();
-        $data = json_decode($data, true);
-
-        // find user by username
+        $data = json_decode($request->getContent(), true);
+        
         $user = $userRepository->findOneBy(['username' => $data['username']]);
 
         if (!$user) {
             return new JsonResponse(['message' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
         }
+
         if (!password_verify($data['password'], $user->getPassword())) {
             return new JsonResponse(['message' => 'Mot de passe incorrect'], Response::HTTP_UNAUTHORIZED);
         }
-        // TODO ajouter Jwt token et revenir sur cette méthode pour la finaliser.
-        // generate jwt token
-
+        
         return $this->json(
             $user,
             Response::HTTP_OK,
             [],
-            []
+            ['groups' => ['user:read']]
         );
     }
-
-    /**
-     * Logout de l'utilisateur
-     * @Route("/api/logout", name="api.logout", methods={"POST"})
-     */
-    public function apiLogout(Request $request): Response
-    {   
-        // TODO ajouter Jwt token et revenir sur cette méthode pour la finaliser.
-        return new JsonResponse(['message' => 'Déconnexion réussie'], Response::HTTP_OK);
-    }
-
 }
