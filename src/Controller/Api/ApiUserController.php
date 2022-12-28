@@ -14,10 +14,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
 use Symfony\Component\Security\Core\User\UserInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
@@ -189,74 +185,36 @@ class ApiUserController extends AbstractController
         );
     }
 
-    /**
-     * Permet de se connecter
-     * Actuellement j'utilise le JWT Token dans vue pour l'Auth ur l'API...
-     * mais cette route permet de réupérer le sinfos complètes d'un user si besoin...
-     * 
-     * @Route("/api/login", name="api.login", methods={"POST"})
-     */
-    // public function apiLogin(Request $request, 
-    // UserRepository $userRepository,
-    // TokenStorageInterface $storage
-    // ): Response
-    // {   
-    //         // Format de donnée attendu
-    //         // {
-    //         //     "username": "user@usermail",
-    //         //     "password": "userpassword"
-    //         // }
-
-    //     $data = json_decode($request->getContent(), true);
-    //     $user = $userRepository->findOneBy(['username' => $data['username']]);
-
-    //     // call user authentification service
-    //    $storage->setToken(
-    //         new UsernamePasswordToken(
-    //             $user,
-    //             null,
-    //             'main',
-    //             $user->getRoles()
-    //         )
-    //     );
-
-    //     $user = $storage->getToken()->getUser();
-
-    
-    //     if (!$user) {
-    //         return new JsonResponse(['message' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
-    //     }
-
-    //     if (!password_verify($data['password'], $user->getPassword())) {
-    //         return new JsonResponse(['message' => 'Mot de passe incorrect'], Response::HTTP_UNAUTHORIZED);
-    //     }
-        
-    //     return $this->json(
-    //         $user,
-    //         Response::HTTP_OK,
-    //         [],
-    //         ['groups' => ['user:read']]
-    //     );
-    // }
-
     // json loginroute
 
     /**
-     * Permet de se connecter
+     * Permet de se connecter 
+     * crée et retourne un Jwt Token
+     * connecte aussil'utilisateur dans symfony.
+     * via le firewall main et et mon custom authenticator
+     * 
      * @Route("/api/login", name="api.login", methods={"POST"})
      */
-    public function apiLogin(Request $request, UserInterface $user, JWTTokenManagerInterface $JWTManager)
-    {
+    public function apiLogin(UserInterface $user, JWTTokenManagerInterface $JWTManager)
+    {       
+            // Format de données à envoyer en POST
+            // login dépend de la propriété donnée au pramètre app_user_provider dans security.yaml pour le firewall main
+            // {
+            //     "security": {
+            //         "credentials": {
+            //             "login": "simon",
+            //             "password": "password"
+            //         }
+            //     }
+            // }
 
             $user = $this->getUser();
-            if (!$user) {
-                return new JsonResponse(['message' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
-            }
-
+    
             return new JsonResponse([
                 'username' => $user->getUserIdentifier(),
                 'roles' => $user->getRoles(),
                 'token' => $JWTManager->create($user)
             ]);
     }
+
 }

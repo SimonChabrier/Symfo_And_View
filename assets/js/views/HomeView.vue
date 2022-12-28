@@ -56,7 +56,7 @@
                     {{ user.username }} 
                 </span>
             </router-link>
-             <div v-if="$store.state.loggedIn">  
+             <div v-if="user.username != $store.state.adminName">  
                 <button aria-label='delete item' 
                     @click = " deleteUser(user.id) " 
                     type='button'> X
@@ -102,7 +102,6 @@
 // import axios from 'axios';
 import ButtonComponent from '@comp/elements/ButtonComponent.vue'
 import LoginFormComponent from '@comp/LoginFormComponent.vue'
-import authServices from '@sevices/auth.service.js'
 
 /////////////////// export du composant ///////////////////
 
@@ -133,8 +132,8 @@ export default {
         register () { 
             this.$store.dispatch('registerUser', this.getFormDatas) 
             this.resetForm()
-            this.lastUser = this.$store.state.user;
-            console.log(this.lastUser)
+            // this.lastUser = this.$store.state.user;
+            // console.log(this.lastUser)
         },
         deleteUser (id) { 
             this.$store.dispatch('deleteUser', id)

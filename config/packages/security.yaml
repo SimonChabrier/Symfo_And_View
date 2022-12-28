@@ -12,36 +12,7 @@ security:
                 class: App\Entity\User
                 property: username
 
-        api_user_provider:
-            entity:
-                class: App\Entity\User
-                property: username
-                    
     firewalls:
-        # login firewall context
-        # login:
-        #     pattern: ^/api/login
-        #     stateless: true
-        #     provider: api_user_provider
-        #     custom_authenticator: App\Security\UserLoginAuthenticator
-            
-        #     # JWT generate Token route
-        #     json_login:
-        #         check_path: /api/login_check
-        #         success_handler: lexik_jwt_authentication.handler.authentication_success
-        #         failure_handler: lexik_jwt_authentication.handler.authentication_failure
-        #         username_path: security.credentials.login
-        #         password_path: security.credentials.password
-                
-
-        # # API firewall context
-        # api:
-        #    pattern:   ^/api
-        #    stateless: true
-        #    provider: api_user_provider
-        #    jwt: ~  
-
-
         # Dev firewall context
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/

@@ -13,6 +13,7 @@ export default createStore ({
     user: {},
     searchUsers : [],
     loggedIn: false,
+    adminName:'simon'
   },
 
   // les getters permettent de récupérer des données du state dans son contexte et son état actuel
