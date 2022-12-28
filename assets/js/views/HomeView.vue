@@ -60,29 +60,26 @@
 <!-- user list  -->
 
 <div class="home">
+
     <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }} </h1>
-    <!-- liste des users -->
-    <Transition>
-        <div class="users" v-if="$store.state.allUsers.length > 0">
-            <div class="item" v-for="user in $store.state.allUsers" :key="user.id">
-                <!-- router link pour lier chaque user à son profil -->
-                <router-link :to="{ name: 'user', params: { id: user.id }}">
-                    <span >
-                        {{ user.username }} 
-                    </span>
-                </router-link>
-                <div v-if="user.username != $store.state.adminName && $store.state.loggedIn === true">  
-                    <button aria-label='delete item' 
+    
+    <div class="users" v-if="$store.state.allUsers.length > 0">
+        <TransitionGroup name="list" tag="ul">
+            <li v-for="user in $store.state.allUsers" :key="user.id">
+                
+                    <button v-if="user.username != $store.state.adminName && $store.state.loggedIn === true" aria-label='delete item' 
                         @click = " deleteUser(user.id) " 
                         type='button'> X
                     </button>
-                </div> 
-            </div>
-        </div>
-    </Transition>
+               
+                    <router-link :to="{ name: 'user', params: { id: user.id }}">
+                        {{ user.username }} 
+                    </router-link>
+                
+            </li>
+        </TransitionGroup>
+    </div>
 </div>
-
-
 
 <div class="register" @submit.prevent="register">
         
@@ -248,6 +245,15 @@ export default {
     gap: 10px;
     margin-top: $gutter-big;
     margin-bottom: $gutter-big;
+
+    & li {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 0.5rem;
+        gap: 10px;
+    }
 }
 
 .item {
@@ -379,9 +385,13 @@ label {
   transition-delay: 0.25s;
 }
 
-.nested-enter-from,
-.nested-leave-to {
+.nested-enter-from {
   transform: translateY(30px);
+  opacity: 0;
+}
+
+.nested-leave-to {
+  transform: translateY(-30px);
   opacity: 0;
 }
 
@@ -399,6 +409,18 @@ label {
 .nested-leave-to .inner {
   transform: translateX(30px);
   opacity: 0.001;
+}
+
+// list transition
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 
 </style>

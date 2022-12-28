@@ -6,6 +6,7 @@ const API_ROOT_URL = 'https://127.0.0.1:8000/api/users'
 
 
 export default createStore ({
+
   state: {
     count : '',
     deleteMessage: '',
