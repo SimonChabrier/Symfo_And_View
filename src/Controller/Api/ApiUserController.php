@@ -217,4 +217,22 @@ class ApiUserController extends AbstractController
             ]);
     }
 
+    // json logout route
+
+    /**
+     * Permet de se déconnecter
+     * @Route("/api/logout", name="api.logout", methods={"POST"})
+     */
+    public function apiLogout()
+    {
+        // le logout est géré par le firewall main et le custom authenticator
+        // il suffit de faire une requête POST sur cette route pour se déconnecter
+        // le token est invalide après déconnexion
+
+        return new JsonResponse([
+            'message' => 'Déconnexion réussie'
+        ]);
+        
+    }
+
 }

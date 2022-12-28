@@ -23,14 +23,21 @@ async getAuth(user) {
 },
 
 
-killAuth() {
-    localStorage.removeItem('token');
-    
-    if(!localStorage.getItem('token')) {
-    return true;
-    }
+async killAuth() {
+    console.log('killAuth');
 
-    axios.post('https://127.0.0.1:8000/logout')
+    return await axios.post('https://127.0.0.1:8000/logout').then(response => {
+
+        console.log(response.status);
+
+        localStorage.removeItem('token');
+
+        if(!localStorage.getItem('token')) {
+        return true;
+        }
+    }).then(() => {
+        //window.location.reload();
+    })
 },
 
 checkToken() {

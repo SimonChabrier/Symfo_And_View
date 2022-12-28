@@ -13,7 +13,7 @@ export default createStore ({
     user: {},
     searchUsers : [],
     loggedIn: false,
-    adminName:'simon'
+    adminName:'simon',
   },
 
   // les getters permettent de récupérer des données du state dans son contexte et son état actuel
@@ -70,7 +70,8 @@ export default createStore ({
       context.commit('setUsers', response);
       context.commit('setCount', response.length);
       // set loggedIn to true if token exists
-      if(authServices.checkToken()) {
+
+      if(authServices.checkToken() === true) {
         context.state.loggedIn = true;
       }
     },
@@ -119,6 +120,11 @@ export default createStore ({
         const results = '';
         context.commit('setSearchUsers', results);
       }
+    },
+
+    logout(context) {
+      authServices.killAuth();
+      context.state.loggedIn = false;
     }
 
    

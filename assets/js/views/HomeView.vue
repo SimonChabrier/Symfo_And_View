@@ -11,7 +11,7 @@
             {{ user.username }}
         </router-link>
             
-        <button aria-label='delete item' v-if="user" 
+        <button aria-label='delete item' v-if="user.username != $store.state.adminName" 
             @click = "deleteUser(user.id)" 
             type='button'> X
         </button>
@@ -42,7 +42,15 @@
     </span>
 </div>
 
+<!-- logout button -->
 
+<div class="logout" v-if="$store.state.loggedIn === true">
+    <button-component 
+        @click="logout()" 
+        :text="'Déconnexion'" 
+        :color="'red'">
+    </button-component>
+</div>
 
 <div class="home">
     <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }} </h1>
@@ -56,7 +64,7 @@
                     {{ user.username }} 
                 </span>
             </router-link>
-             <div v-if="user.username != $store.state.adminName">  
+             <div v-if="user.username != $store.state.adminName && $store.state.loggedIn === true">  
                 <button aria-label='delete item' 
                     @click = " deleteUser(user.id) " 
                     type='button'> X
@@ -102,6 +110,7 @@
 // import axios from 'axios';
 import ButtonComponent from '@comp/elements/ButtonComponent.vue'
 import LoginFormComponent from '@comp/LoginFormComponent.vue'
+// import AuthService from '@sevices/auth.service.js'
 
 /////////////////// export du composant ///////////////////
 
@@ -123,7 +132,6 @@ export default {
             password: '',
             confirmPassword: '',
             search: '',
-            logged: '',
         }
     },
     /////////////////// méthodes ///////////////////
@@ -148,6 +156,9 @@ export default {
         },
         closeNewUserCreatedMessage () { 
             this.$store.state.user = false
+        },
+        logout () { 
+            this.$store.dispatch('logout');
         },
 
     },
