@@ -44,13 +44,7 @@
 
 <!-- logout button -->
 
-<div class="logout" v-if="$store.state.loggedIn === true">
-    <button-component 
-        @click="logout()" 
-        :text="'Déconnexion'" 
-        :color="'red'">
-    </button-component>
-</div>
+
 
 <div class="home">
     <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }} </h1>
@@ -157,10 +151,6 @@ export default {
         closeNewUserCreatedMessage () { 
             this.$store.state.user = false
         },
-        logout () { 
-            this.$store.dispatch('logout');
-        },
-
     },
    
     /////////////////// computed ///////////////////

@@ -125,6 +125,11 @@ export default createStore ({
     logout(context) {
       authServices.killAuth();
       context.state.loggedIn = false;
+    },
+
+    login(context, user) {
+      authServices.setAuth(user);
+      context.state.loggedIn = true;
     }
 
    

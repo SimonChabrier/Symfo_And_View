@@ -8,7 +8,8 @@
         </div>
 
         <form class="loginform" @submit.prevent="login">
-
+            <div v-if="$store.state.loggedIn === false">
+            
             <label for="usernme">Nom d'utilisateur</label>
             <input
             type="text"
@@ -28,10 +29,19 @@
             />
 
             <button-component 
-                @click="''" 
+                @click="login" 
                 :text="'connexion'" 
                 :color="'orange'">
             </button-component>
+            </div>
+
+            <div v-if="$store.state.loggedIn === true">
+                <button-component 
+                    @click="logout()" 
+                    :text="'Déconnexion'" 
+                    :color="'red'">
+                </button-component>
+            </div>
 
         </form>
     </div>
@@ -55,16 +65,19 @@ export default {
         return {
             username: '',
             password: '',
-            isLogged: false
+            //isLogged: false
         }
     },
 
     methods: {
         login () {
             AuthService.getAuth({ username: this.username, password: this.password })
-            this.$store.state.isLogged = AuthService.checkToken()
-            this.isLogged = this.$store.state.isLogged
-        }
+            this.$store.state.loggedIn = true
+        },
+
+        logout () { 
+            this.$store.dispatch('logout');
+        },
     },
 }
 </script>
