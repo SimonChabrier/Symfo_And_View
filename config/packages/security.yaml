@@ -18,19 +18,21 @@ security:
                 property: username
                     
     firewalls:
-        # API  User Json Login no token route 
+        # lgin firewall context
         login:
             pattern: ^/api/login
             stateless: true
             provider: api_user_provider
+            custom_authenticator: App\Security\UserLoginAuthenticator
             
             # JWT generate Token route
             json_login:
                 check_path: /api/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+                
 
-        # API firewall
+        # API firewall context
         api:
            pattern:   ^/api
            stateless: true
@@ -38,16 +40,17 @@ security:
            jwt: ~  
 
 
-        # Dev firewall
+        # Dev firewall context
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        # Default main firewal
+        # Default main firewall context
         main:
             lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\UserLoginAuthenticator
+            
             logout:
                 path: app_logout
                 # Redirection après logout

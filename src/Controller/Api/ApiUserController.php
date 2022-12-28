@@ -198,7 +198,7 @@ class ApiUserController extends AbstractController
             //     "username": "user@usermail",
             //     "password": "userpassword"
             // }
-
+           // dd($this->getUser());
         $data = json_decode($request->getContent(), true);
         
         $user = $userRepository->findOneBy(['username' => $data['username']]);
