@@ -1,72 +1,88 @@
 <template>
 
+<!-- Search input  -->
 <div class="search">
     <input type="text" placeholder="Rechercher un utilisateur" v-model="search" @input="getSearchDatas">
 </div>
 
-<div class="results" v-if="$store.state.searchUsers.length">
-    <div class="item" v-for="user in $store.state.searchUsers" :key="user.id">
-        <!-- router link pour lier chaque user à son profil -->
-        <router-link :to="{ name: 'user', params: { id: user.id }}">
-            {{ user.username }}
-        </router-link>
-            
-        <button aria-label='delete item' v-if="user.username != $store.state.adminName" 
-            @click = "deleteUser(user.id)" 
-            type='button'> X
-        </button>
+<!-- Search results  -->
+
+<Transition duration="550" name="nested">
+    <div class="results" v-if="$store.state.searchUsers.length">
+        <div class="item" v-for="user in $store.state.searchUsers" :key="user.id">
+            <!-- router link pour lier chaque user à son profil -->
+            <router-link :to="{ name: 'user', params: { id: user.id }}">
+                {{ user.username }}
+            </router-link>
+                
+            <button aria-label='delete item' v-if="user.username != $store.state.adminName" 
+                @click = "deleteUser(user.id)" 
+                type='button'> X
+            </button>
+        </div>
     </div>
-</div>
+</Transition>
+
+<!-- Login Form component -->
 
 <div class="login">
     <LoginFormComponent />
 </div>
 
-<div class="deleteMessage" v-if="$store.state.deleteMessage">
-    <button class="close" aria-label='close message'
-        @click = "closeDeleteMessage()" 
-        type='button'> X
-    </button>
-    <span>
-        {{ $store.state.deleteMessage }}
-    </span>
-</div>
+<!-- delete conformation message -->
 
-<div class="last" v-if="$store.state.user.username">
-    <button class="close" aria-label='close message'
-        @click = "closeNewUserCreatedMessage(event)" 
-        type='button'> X
-    </button>
-    <span>
-        Dernier utilisateur inscrit : {{ $store.state.user.username }}
-    </span>
-</div>
+<Transition duration="550" name="nested">
+    <div class="deleteMessage" v-if="$store.state.deleteMessage">
+        <button class="close" aria-label='close message'
+            @click = "closeDeleteMessage()" 
+            type='button'> X
+        </button>
+        <span>
+            {{ $store.state.deleteMessage }}
+        </span>
+    </div>
+</Transition>
 
-<!-- logout button -->
+<!-- new user created message -->
 
+<Transition duration="550" name="nested">
+    <div class="last" v-if="$store.state.user.username">
+        <button class="close" aria-label='close message'
+            @click = "closeNewUserCreatedMessage(event)" 
+            type='button'> X
+        </button>
+        <span>
+            Dernier utilisateur inscrit : {{ $store.state.user.username }}
+        </span>
+    </div>
+</Transition>
 
+<!-- user list  -->
 
 <div class="home">
     <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }} </h1>
-    
     <!-- liste des users -->
-    <div class="users" v-if="$store.state.allUsers.length > 0">
-        <div class="item" v-for="user in $store.state.allUsers" :key="user.id">
-            <!-- router link pour lier chaque user à son profil -->
-            <router-link :to="{ name: 'user', params: { id: user.id }}">
-                <span >
-                    {{ user.username }} 
-                </span>
-            </router-link>
-             <div v-if="user.username != $store.state.adminName && $store.state.loggedIn === true">  
-                <button aria-label='delete item' 
-                    @click = " deleteUser(user.id) " 
-                    type='button'> X
-                </button>
-            </div> 
+    <Transition>
+        <div class="users" v-if="$store.state.allUsers.length > 0">
+            <div class="item" v-for="user in $store.state.allUsers" :key="user.id">
+                <!-- router link pour lier chaque user à son profil -->
+                <router-link :to="{ name: 'user', params: { id: user.id }}">
+                    <span >
+                        {{ user.username }} 
+                    </span>
+                </router-link>
+                <div v-if="user.username != $store.state.adminName && $store.state.loggedIn === true">  
+                    <button aria-label='delete item' 
+                        @click = " deleteUser(user.id) " 
+                        type='button'> X
+                    </button>
+                </div> 
+            </div>
         </div>
-    </div>
+    </Transition>
 </div>
+
+
 
 <div class="register" @submit.prevent="register">
         
@@ -340,6 +356,49 @@ label {
         color: $lightWhite;
         width: 80%;
     }
+}
+
+
+// transition par defaut fade in/out
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
+// transition nested elements
+.nested-enter-active, .nested-leave-active {
+	transition: all 0.3s ease-in-out;
+}
+/* delay leave of parent element */
+.nested-leave-active {
+  transition-delay: 0.25s;
+}
+
+.nested-enter-from,
+.nested-leave-to {
+  transform: translateY(30px);
+  opacity: 0;
+}
+
+/* we can also transition nested elements using nested selectors */
+.nested-enter-active .inner,
+.nested-leave-active .inner { 
+  transition: all 0.3s ease-in-out;
+}
+/* delay enter of nested element */
+.nested-enter-active .inner {
+	transition-delay: 0.25s;
+}
+
+.nested-enter-from .inner,
+.nested-leave-to .inner {
+  transform: translateX(30px);
+  opacity: 0.001;
 }
 
 </style>
