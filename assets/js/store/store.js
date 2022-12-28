@@ -94,8 +94,10 @@ export default createStore ({
       // retourne un message de confirmation
       context.commit('confirmDelete', `L'utilisateur ${response.username} a bien été supprimé`);
       // supprimer l'utilisateur supprimé si il est dans le tableau des résultats de recherche
-      const searchUsers = context.state.searchUsers.filter(user => user.id !== id);
-      context.commit('setSearchUsers', searchUsers);
+      if(context.state.searchUsers.length > 0) {
+        const results = context.state.searchUsers.filter(user => user.id !== id);
+        context.commit('setSearchUsers', results);
+      }
       // je refectche l'ensemble des users pour mettre à jour le tableau des users dans le state et garder à jour l'affichage de HomeView
       context.dispatch('fetchUsers');
     },

@@ -247,27 +247,16 @@ class ApiUserController extends AbstractController
      */
     public function apiLogin(Request $request, UserInterface $user, JWTTokenManagerInterface $JWTManager)
     {
-            //dd($this->getUser());
-            
-            // authenticate the user
-            $user = $this->getUser();
-            
-            // generate a JWT for the user
-            // $jwt = $this->container->get('lexik_jwt_authentication.jwt_manager')->create($user);
-            // dd($jwt);
 
+            $user = $this->getUser();
+            if (!$user) {
+                return new JsonResponse(['message' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
+            }
 
             return new JsonResponse([
                 'username' => $user->getUserIdentifier(),
                 'roles' => $user->getRoles(),
                 'token' => $JWTManager->create($user)
             ]);
-            // return a JWT
-            // return new JsonResponse([
-            //     'username' => $user->getUserIdentifier(),
-            //     'roles' => $user->getRoles(),
-            // ]);
-
-
     }
 }
