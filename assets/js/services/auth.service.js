@@ -1,13 +1,24 @@
 import axios from 'axios';
 
-const API_URL = 'https://127.0.0.1:8000/api/login_check';
+const API_URL = 'https://127.0.0.1:8000/api/login';
 
 const authServices =  {
 
 async getAuth(user) {
     console.log('getAuth');
 
-    const data = { username: user.username, password: user.password }
+    const data = { 
+
+        "security": {
+            "credentials": {
+                "login": user.username,
+                "password": user.password
+            }
+        }
+        // username: user.username, 
+        // password: user.password 
+    }
+
     return axios.post(API_URL, data)
     .then(response => { localStorage.setItem('token', JSON.stringify(response.data.token)); })
 },

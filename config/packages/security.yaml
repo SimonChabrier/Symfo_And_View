@@ -10,7 +10,7 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\User
-                property: email
+                property: username
 
         api_user_provider:
             entity:
@@ -18,26 +18,28 @@ security:
                 property: username
                     
     firewalls:
-        # lgin firewall context
-        login:
-            pattern: ^/api/login
-            stateless: true
-            provider: api_user_provider
-            custom_authenticator: App\Security\UserLoginAuthenticator
+        # login firewall context
+        # login:
+        #     pattern: ^/api/login
+        #     stateless: true
+        #     provider: api_user_provider
+        #     custom_authenticator: App\Security\UserLoginAuthenticator
             
-            # JWT generate Token route
-            json_login:
-                check_path: /api/login_check
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        #     # JWT generate Token route
+        #     json_login:
+        #         check_path: /api/login_check
+        #         success_handler: lexik_jwt_authentication.handler.authentication_success
+        #         failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        #         username_path: security.credentials.login
+        #         password_path: security.credentials.password
                 
 
-        # API firewall context
-        api:
-           pattern:   ^/api
-           stateless: true
-           provider: api_user_provider
-           jwt: ~  
+        # # API firewall context
+        # api:
+        #    pattern:   ^/api
+        #    stateless: true
+        #    provider: api_user_provider
+        #    jwt: ~  
 
 
         # Dev firewall context
@@ -51,6 +53,12 @@ security:
             provider: app_user_provider
             custom_authenticator: App\Security\UserLoginAuthenticator
             
+            json_login:
+                check_path:    /api/login
+                username_path: security.credentials.login
+                password_path: security.credentials.password
+
+
             logout:
                 path: app_logout
                 # Redirection après logout

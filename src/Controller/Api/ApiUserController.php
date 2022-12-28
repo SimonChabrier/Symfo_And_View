@@ -12,14 +12,19 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
+use Symfony\Component\Security\Core\User\UserInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 
 class ApiUserController extends AbstractController
 {   
-
+   
 //////////////////////////////////////////////* USER CRUD 
 
     /**
@@ -191,31 +196,78 @@ class ApiUserController extends AbstractController
      * 
      * @Route("/api/login", name="api.login", methods={"POST"})
      */
-    public function apiLogin(Request $request, UserRepository $userRepository): Response
-    {   
-            // Format de donnée attendu
-            // {
-            //     "username": "user@usermail",
-            //     "password": "userpassword"
-            // }
-           // dd($this->getUser());
-        $data = json_decode($request->getContent(), true);
-        
-        $user = $userRepository->findOneBy(['username' => $data['username']]);
+    // public function apiLogin(Request $request, 
+    // UserRepository $userRepository,
+    // TokenStorageInterface $storage
+    // ): Response
+    // {   
+    //         // Format de donnée attendu
+    //         // {
+    //         //     "username": "user@usermail",
+    //         //     "password": "userpassword"
+    //         // }
 
-        if (!$user) {
-            return new JsonResponse(['message' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
-        }
+    //     $data = json_decode($request->getContent(), true);
+    //     $user = $userRepository->findOneBy(['username' => $data['username']]);
 
-        if (!password_verify($data['password'], $user->getPassword())) {
-            return new JsonResponse(['message' => 'Mot de passe incorrect'], Response::HTTP_UNAUTHORIZED);
-        }
+    //     // call user authentification service
+    //    $storage->setToken(
+    //         new UsernamePasswordToken(
+    //             $user,
+    //             null,
+    //             'main',
+    //             $user->getRoles()
+    //         )
+    //     );
+
+    //     $user = $storage->getToken()->getUser();
+
+    
+    //     if (!$user) {
+    //         return new JsonResponse(['message' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
+    //     }
+
+    //     if (!password_verify($data['password'], $user->getPassword())) {
+    //         return new JsonResponse(['message' => 'Mot de passe incorrect'], Response::HTTP_UNAUTHORIZED);
+    //     }
         
-        return $this->json(
-            $user,
-            Response::HTTP_OK,
-            [],
-            ['groups' => ['user:read']]
-        );
+    //     return $this->json(
+    //         $user,
+    //         Response::HTTP_OK,
+    //         [],
+    //         ['groups' => ['user:read']]
+    //     );
+    // }
+
+    // json loginroute
+
+    /**
+     * Permet de se connecter
+     * @Route("/api/login", name="api.login", methods={"POST"})
+     */
+    public function apiLogin(Request $request, UserInterface $user, JWTTokenManagerInterface $JWTManager)
+    {
+            //dd($this->getUser());
+            
+            // authenticate the user
+            $user = $this->getUser();
+            
+            // generate a JWT for the user
+            // $jwt = $this->container->get('lexik_jwt_authentication.jwt_manager')->create($user);
+            // dd($jwt);
+
+
+            return new JsonResponse([
+                'username' => $user->getUserIdentifier(),
+                'roles' => $user->getRoles(),
+                'token' => $JWTManager->create($user)
+            ]);
+            // return a JWT
+            // return new JsonResponse([
+            //     'username' => $user->getUserIdentifier(),
+            //     'roles' => $user->getRoles(),
+            // ]);
+
+
     }
 }
