@@ -14,7 +14,7 @@ export default createStore ({
     user: {},
     searchUsers : [],
     loggedIn: false,
-    adminName:'simon',
+    adminName:'admin',
     errors: '',
   },
 
