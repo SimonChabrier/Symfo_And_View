@@ -44,14 +44,15 @@ checkToken() {
     console.log('checkToken');
 
     if(localStorage.getItem('token')) {
+        console.log('token exists');
         return true;
     } else {
         return false;
     }
 },
 // check token in local storage
-checkAuth() {
-    console.log('checkAuth');
+authenticateUser() {
+    console.log('authenticateUser');
 
     // récupération du token dans le local storage
     let token = JSON.parse(localStorage.getItem('token'));
