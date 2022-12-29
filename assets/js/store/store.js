@@ -75,30 +75,28 @@ export default createStore ({
     // mais si je veux la sécuriser le token est ici dans le header..
     async fetchUsers(context) {
       const headers = authServices.authenticateUser();
-      //authServices.checkToken() === true ? context.state.loggedIn = true : context.state.loggedIn = false;
       
       try { await axios.get (API_ROOT_URL, { headers })
       .then(response => {
-
-        if (response.status === 200) {
-          context.commit('setUsers', response.data);
-          context.commit('setCount', response.data.length);
-          console.log(context.state.allUsers);
-          // set loggedIn to true if token exists
-            if(authServices.checkToken() === true){
-              context.commit('setLoggedIn', true);
-            } else {
-              context.commit('setLoggedIn', false);
-            }
-        }
-      });
+          if (response.status === 200) {
+            context.commit('setUsers', response.data);
+            context.commit('setCount', response.data.length);
+            console.log(context.state.allUsers);
+            // set loggedIn to true if token exists
+              if(authServices.checkToken() === true){
+                context.commit('setLoggedIn', true);
+              } else {
+                context.commit('setLoggedIn', false);
+              }
+          }
+        });
       } catch (error) {
         if (error.response) {
           context.commit('catchErrors', `Erreur Code : ${error.response.data.status}`);
-          console.log(context.state.errors);
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          // console.log(context.state.errors);
+          // console.log(error.response.data);
+          // console.log(error.response.status);
+          // console.log(error.response.headers);
         }
       }
     },
@@ -122,6 +120,7 @@ export default createStore ({
       // met à jour le compteur de users ne enlevant 1
       context.commit('decrementCount');
       // retourne un message de confirmation
+      console.log(response)
       context.commit('confirmDelete', `L'utilisateur ${response.username} a bien été supprimé`);
       // supprimer l'utilisateur supprimé si il est dans le tableau des résultats de recherche
       if(context.state.searchUsers.length > 0) {

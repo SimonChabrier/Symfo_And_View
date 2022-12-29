@@ -34,7 +34,7 @@
 
         <Transition duration="550" name="nested">
             <div class="deleteMessage" v-if="$store.state.deleteMessage">
-                <button class="close" aria-label='close message' v-if="user.username != $store.state.adminName" 
+                <button class="close" aria-label='close message' v-if="user?.username != $store.state.adminName" 
                     @click = "closeDeleteMessage()" 
                     type='button'> X
                 </button>
