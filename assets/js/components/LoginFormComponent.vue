@@ -7,8 +7,9 @@
             <h1>Connexion</h1>
         </div>
 
-        <form class="loginform" @submit.prevent="login">
-
+        <form class="loginform">
+            <div v-if="$store.state.loggedIn === false">
+            
             <label for="usernme">Nom d'utilisateur</label>
             <input
             type="text"
@@ -28,11 +29,21 @@
             />
 
             <button-component 
-                @click="''" 
+                @click="authentication" 
                 :text="'connexion'" 
                 :color="'orange'">
             </button-component>
+            </div>
 
+            <Transition duration="550" name="nested">
+                <div v-if="$store.state.loggedIn === true">
+                    <button-component 
+                        @click="logout()" 
+                        :text="'Déconnexion'" 
+                        :color="'red'">
+                    </button-component>
+                </div>
+            </Transition>
         </form>
     </div>
 
@@ -55,16 +66,18 @@ export default {
         return {
             username: '',
             password: '',
-            isLogged: false
         }
     },
 
     methods: {
-        login () {
+        authentication () {
             AuthService.getAuth({ username: this.username, password: this.password })
-            this.$store.state.isLogged = AuthService.checkToken()
-            this.isLogged = this.$store.state.isLogged
-        }
+            this.$store.state.loggedIn = true
+        },
+
+        logout () { 
+            this.$store.dispatch('logout');
+        },
     },
 }
 </script>
@@ -122,6 +135,54 @@ input[type="submit"] {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+// transition nested elements
+// transition par defaut fade in/out
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
+// transition nested elements
+.nested-enter-active, .nested-leave-active {
+	transition: all 0.3s ease-in-out;
+}
+/* delay leave of parent element */
+// .nested-leave-active {
+//   transition-delay: 0.25s;
+// }
+
+.nested-enter-from {
+  transform: translateY(30px);
+  opacity: 0;
+}
+
+.nested-leave-to {
+  transform: translateY(-30px);
+  opacity: 0;
+}
+
+
+/* we can also transition nested elements using nested selectors */
+.nested-enter-active .inner,
+.nested-leave-active .inner { 
+  transition: all 0.3s ease-in-out;
+}
+/* delay enter of nested element */
+.nested-enter-active .inner {
+	transition-delay: 0.25s;
+}
+
+.nested-enter-from .inner,
+.nested-leave-to .inner {
+  transform: translateX(30px);
+  opacity: 0.001;
 }
 
 

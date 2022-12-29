@@ -1,98 +1,113 @@
 <template>
+    <div class="homeView">
+        <!-- Search input  -->
+        <div class="search">
+            <input type="text" placeholder="Rechercher un utilisateur" v-model="search" @input="getSearchDatas">
+        </div>
 
-<div class="search">
-    <input type="text" placeholder="Rechercher un utilisateur" v-model="search" @input="getSearchDatas">
-</div>
+        <!-- Search results  -->
 
-<div class="results" v-if="$store.state.searchUsers.length">
-    <div class="item" v-for="user in $store.state.searchUsers" :key="user.id">
-        <!-- router link pour lier chaque user à son profil -->
-        <router-link :to="{ name: 'user', params: { id: user.id }}">
-            {{ user.username }}
-        </router-link>
-            
-        <button aria-label='delete item' v-if="user" 
-            @click = "deleteUser(user.id)" 
-            type='button'> X
-        </button>
-    </div>
-</div>
+        <Transition duration="550" name="nested">
+            <div class="results" v-if="$store.state.searchUsers.length">
+                <div class="item" v-for="user in $store.state.searchUsers" :key="user.id">
+                    <!-- router link pour lier chaque user à son profil -->
+                    <router-link :to="{ name: 'user', params: { id: user.id }}">
+                        {{ user.username }}
+                    </router-link>
+                        
+                    <button aria-label='delete item' v-if="user.username != $store.state.adminName" 
+                        @click = "deleteUser(user.id)" 
+                        type='button'> X
+                    </button>
+                </div>
+            </div>
+        </Transition>
 
-<div class="login">
-    <LoginFormComponent />
-</div>
+        <!-- Login Form component -->
 
-<div class="deleteMessage" v-if="$store.state.deleteMessage">
-    <button class="close" aria-label='close message'
-        @click = "closeDeleteMessage()" 
-        type='button'> X
-    </button>
-    <span>
-        {{ $store.state.deleteMessage }}
-    </span>
-</div>
+        <div class="login">
+            <LoginFormComponent />
+        </div>
 
-<div class="last" v-if="$store.state.user.username">
-    <button class="close" aria-label='close message'
-        @click = "closeNewUserCreatedMessage(event)" 
-        type='button'> X
-    </button>
-    <span>
-        Dernier utilisateur inscrit : {{ $store.state.user.username }}
-    </span>
-</div>
+        <!-- delete conformation message -->
 
-
-
-<div class="home">
-    <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }} </h1>
-    
-    <!-- liste des users -->
-    <div class="users" v-if="$store.state.allUsers.length > 0">
-        <div class="item" v-for="user in $store.state.allUsers" :key="user.id">
-            <!-- router link pour lier chaque user à son profil -->
-            <router-link :to="{ name: 'user', params: { id: user.id }}">
-                <span >
-                    {{ user.username }} 
-                </span>
-            </router-link>
-             <div v-if="$store.state.loggedIn">  
-                <button aria-label='delete item' 
-                    @click = " deleteUser(user.id) " 
+        <Transition duration="550" name="nested">
+            <div class="deleteMessage" v-if="$store.state.deleteMessage">
+                <button class="close" aria-label='close message'
+                    @click = "closeDeleteMessage()" 
                     type='button'> X
                 </button>
-            </div> 
+                <span>
+                    {{ $store.state.deleteMessage }}
+                </span>
+            </div>
+        </Transition>
+
+        <!-- new user created message -->
+
+        <Transition duration="550" name="nested">
+            <div class="last" v-if="$store.state.user.username">
+                <button class="close" aria-label='close message'
+                    @click = "closeNewUserCreatedMessage(event)" 
+                    type='button'> X
+                </button>
+                <span>
+                    Dernier utilisateur inscrit : {{ $store.state.user.username }}
+                </span>
+            </div>
+        </Transition>
+
+        <!-- user list  -->
+
+        <div class="home">
+
+            <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }} </h1>
+
+            <div class="users" v-if="$store.state.allUsers.length > 0">
+                <TransitionGroup name="list" tag="ul">
+                    <li v-for="user in $store.state.allUsers" :key="user.id">
+                        
+                            <button v-if="user.username != $store.state.adminName && $store.state.loggedIn === true" aria-label='delete item' 
+                                @click = " deleteUser(user.id) " 
+                                type='button'> X
+                            </button>
+                    
+                            <router-link :to="{ name: 'user', params: { id: user.id }}">
+                                {{ user.username }} 
+                            </router-link>
+                        
+                    </li>
+                </TransitionGroup>
+            </div>
         </div>
+
+        <div class="register" @submit.prevent="register">
+                
+            <div class="title">
+                <h1>Inscription</h1>
+            </div>
+
+            <form class= "registerForm">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" placeholder="Username" v-model="username">
+                
+                <label for="email">Email</label>
+                <input type="email" placeholder="Email" v-model="email">
+                
+                <label for="password">Mot de passe</label>
+                <input type="password" placeholder="Password" v-model="password">
+
+                <label for="confirmPassword">Confirmer le mot de passe</label>
+                <input type="password" placeholder="Confirm Password" v-model="confirmPassword">
+                
+                <button-component 
+                    @click="$store.dispatch('fetchUsers')" 
+                    :text="'inscription'" 
+                    :color="'red'">
+                </button-component>
+            </form>
+        </div>  
     </div>
-</div>
-
-<div class="register" @submit.prevent="register">
-        
-    <div class="title">
-        <h1>Inscription</h1>
-    </div>
-
-    <form class= "registerForm">
-        <label for="username">Nom d'utilisateur</label>
-        <input type="text" placeholder="Username" v-model="username">
-        
-        <label for="email">Email</label>
-        <input type="email" placeholder="Email" v-model="email">
-        
-        <label for="password">Mot de passe</label>
-        <input type="password" placeholder="Password" v-model="password">
-
-        <label for="confirmPassword">Confirmer le mot de passe</label>
-        <input type="password" placeholder="Confirm Password" v-model="confirmPassword">
-        
-        <button-component 
-            @click="$store.dispatch('fetchUsers')" 
-            :text="'inscription'" 
-            :color="'red'">
-        </button-component>
-    </form>
-</div>  
-
 </template>
 
 <script>
@@ -102,7 +117,7 @@
 // import axios from 'axios';
 import ButtonComponent from '@comp/elements/ButtonComponent.vue'
 import LoginFormComponent from '@comp/LoginFormComponent.vue'
-import authServices from '@sevices/auth.service.js'
+// import AuthService from '@sevices/auth.service.js'
 
 /////////////////// export du composant ///////////////////
 
@@ -124,7 +139,6 @@ export default {
             password: '',
             confirmPassword: '',
             search: '',
-            logged: '',
         }
     },
     /////////////////// méthodes ///////////////////
@@ -133,8 +147,8 @@ export default {
         register () { 
             this.$store.dispatch('registerUser', this.getFormDatas) 
             this.resetForm()
-            this.lastUser = this.$store.state.user;
-            console.log(this.lastUser)
+            // this.lastUser = this.$store.state.user;
+            // console.log(this.lastUser)
         },
         deleteUser (id) { 
             this.$store.dispatch('deleteUser', id)
@@ -150,7 +164,6 @@ export default {
         closeNewUserCreatedMessage () { 
             this.$store.state.user = false
         },
-
     },
    
     /////////////////// computed ///////////////////
@@ -232,6 +245,15 @@ export default {
     gap: 10px;
     margin-top: $gutter-big;
     margin-bottom: $gutter-big;
+
+    & li {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 0.5rem;
+        gap: 10px;
+    }
 }
 
 .item {
@@ -340,6 +362,65 @@ label {
         color: $lightWhite;
         width: 80%;
     }
+}
+
+
+// transition par defaut fade in/out
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
+// transition nested elements
+.nested-enter-active, .nested-leave-active {
+	transition: all 0.3s ease-in-out;
+}
+/* delay leave of parent element */
+.nested-leave-active {
+  transition-delay: 0.25s;
+}
+
+.nested-enter-from {
+  transform: translateY(30px);
+  opacity: 0;
+}
+
+.nested-leave-to {
+  transform: translateY(-30px);
+  opacity: 0;
+}
+
+/* we can also transition nested elements using nested selectors */
+.nested-enter-active .inner,
+.nested-leave-active .inner { 
+  transition: all 0.3s ease-in-out;
+}
+/* delay enter of nested element */
+.nested-enter-active .inner {
+	transition-delay: 0.25s;
+}
+
+.nested-enter-from .inner,
+.nested-leave-to .inner {
+  transform: translateX(30px);
+  opacity: 0.001;
+}
+
+// list transition
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 
 </style>

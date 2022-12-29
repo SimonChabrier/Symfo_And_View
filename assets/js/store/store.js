@@ -6,6 +6,7 @@ const API_ROOT_URL = 'https://127.0.0.1:8000/api/users'
 
 
 export default createStore ({
+
   state: {
     count : '',
     deleteMessage: '',
@@ -13,6 +14,7 @@ export default createStore ({
     user: {},
     searchUsers : [],
     loggedIn: false,
+    adminName:'simon',
   },
 
   // les getters permettent de récupérer des données du state dans son contexte et son état actuel
@@ -69,7 +71,8 @@ export default createStore ({
       context.commit('setUsers', response);
       context.commit('setCount', response.length);
       // set loggedIn to true if token exists
-      if(authServices.checkToken()) {
+
+      if(authServices.checkToken() === true) {
         context.state.loggedIn = true;
       }
     },
@@ -94,8 +97,10 @@ export default createStore ({
       // retourne un message de confirmation
       context.commit('confirmDelete', `L'utilisateur ${response.username} a bien été supprimé`);
       // supprimer l'utilisateur supprimé si il est dans le tableau des résultats de recherche
-      const searchUsers = context.state.searchUsers.filter(user => user.id !== id);
-      context.commit('setSearchUsers', searchUsers);
+      if(context.state.searchUsers.length > 0) {
+        const results = context.state.searchUsers.filter(user => user.id !== id);
+        context.commit('setSearchUsers', results);
+      }
       // je refectche l'ensemble des users pour mettre à jour le tableau des users dans le state et garder à jour l'affichage de HomeView
       context.dispatch('fetchUsers');
     },
@@ -116,6 +121,16 @@ export default createStore ({
         const results = '';
         context.commit('setSearchUsers', results);
       }
+    },
+
+    logout(context) {
+      authServices.killAuth();
+      context.state.loggedIn = false;
+    },
+
+    login(context, user) {
+      authServices.setAuth(user);
+      context.state.loggedIn = true;
     }
 
    

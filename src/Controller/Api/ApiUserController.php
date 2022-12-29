@@ -12,14 +12,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 
 class ApiUserController extends AbstractController
 {   
-
+   
 //////////////////////////////////////////////* USER CRUD 
 
     /**
@@ -184,38 +185,54 @@ class ApiUserController extends AbstractController
         );
     }
 
+    // json loginroute
+
     /**
-     * Permet de se connecter
-     * Actuellement j'utilise le JWT Token dans vue pour l'Auth ur l'API...
-     * mais cette route permet de réupérer le sinfos complètes d'un user si besoin...
+     * Permet de se connecter 
+     * crée et retourne un Jwt Token
+     * connecte aussil'utilisateur dans symfony.
+     * via le firewall main et et mon custom authenticator
      * 
      * @Route("/api/login", name="api.login", methods={"POST"})
      */
-    public function apiLogin(Request $request, UserRepository $userRepository): Response
-    {   
-            // Format de donnée attendu
+    public function apiLogin(UserInterface $user, JWTTokenManagerInterface $JWTManager)
+    {       
+            // Format de données à envoyer en POST
+            // login dépend de la propriété donnée au pramètre app_user_provider dans security.yaml pour le firewall main
             // {
-            //     "username": "user@usermail",
-            //     "password": "userpassword"
+            //     "security": {
+            //         "credentials": {
+            //             "login": "simon",
+            //             "password": "password"
+            //         }
+            //     }
             // }
 
-        $data = json_decode($request->getContent(), true);
-        
-        $user = $userRepository->findOneBy(['username' => $data['username']]);
-
-        if (!$user) {
-            return new JsonResponse(['message' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
-        }
-
-        if (!password_verify($data['password'], $user->getPassword())) {
-            return new JsonResponse(['message' => 'Mot de passe incorrect'], Response::HTTP_UNAUTHORIZED);
-        }
-        
-        return $this->json(
-            $user,
-            Response::HTTP_OK,
-            [],
-            ['groups' => ['user:read']]
-        );
+            $user = $this->getUser();
+    
+            return new JsonResponse([
+                'username' => $user->getUserIdentifier(),
+                'roles' => $user->getRoles(),
+                'token' => $JWTManager->create($user)
+            ]);
     }
+
+    // json logout route
+
+    /**
+     * Permet de se déconnecter
+     * @Route("/api/logout", name="api.logout", methods={"POST"})
+     */
+    public function apiLogout()
+    {
+        // le logout est géré par le firewall main et le custom authenticator
+        // il suffit de faire une requête POST sur cette route pour se déconnecter
+        // le token est invalide après déconnexion
+
+        return new JsonResponse([
+            'message' => 'Déconnexion réussie'
+        ]);
+        
+    }
+
 }

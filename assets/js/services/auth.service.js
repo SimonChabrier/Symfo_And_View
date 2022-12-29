@@ -1,23 +1,43 @@
 import axios from 'axios';
 
-const API_URL = 'https://127.0.0.1:8000/api/login_check';
+const API_URL = 'https://127.0.0.1:8000/api/login';
 
 const authServices =  {
 
 async getAuth(user) {
     console.log('getAuth');
 
-    const data = { username: user.username, password: user.password }
+    const data = { 
+        "security": {
+            "credentials": {
+                "login": user.username,
+                "password": user.password
+            }
+        }
+    }
+
     return axios.post(API_URL, data)
-    .then(response => { localStorage.setItem('token', JSON.stringify(response.data.token)); })
+    .then(response => { 
+        localStorage.setItem('token', JSON.stringify(response.data.token)); 
+    })
 },
 
 
-killAuth() {
-    localStorage.removeItem('token');
-    if(!localStorage.getItem('token')) {
-    return true;
-    }
+async killAuth() {
+    console.log('killAuth');
+
+    return await axios.post('https://127.0.0.1:8000/logout').then(response => {
+
+        console.log(response.status);
+
+        localStorage.removeItem('token');
+
+        if(!localStorage.getItem('token')) {
+        return true;
+        }
+    }).then(() => {
+        //window.location.reload();
+    })
 },
 
 checkToken() {
