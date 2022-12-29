@@ -7,7 +7,7 @@
             <h1>Connexion</h1>
         </div>
 
-        <form class="loginform">
+        <form class="loginForm">
             <div v-if="$store.state.loggedIn === false">
             
             <label for="usernme">Nom d'utilisateur</label>
@@ -36,7 +36,10 @@
             </div>
 
             <Transition duration="550" name="nested">
-                <div v-if="$store.state.loggedIn === true">
+
+                <div class="isLogged" v-if="$store.state.loggedIn === true">
+                    <h1>Utilisateur connecté</h1>
+                    <span>{{ $store.state.loggedInUser}}</span>
                     <button-component 
                         @click="logout()" 
                         :text="'Déconnexion'" 
@@ -99,7 +102,7 @@ export default {
     background-color: $mediumBlue;
 }
 
-.loginform {
+.loginForm {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -115,6 +118,7 @@ input {
     height: 50px;
     padding: 0 $gutter-small;
     margin-bottom: $gutter-big;
+    margin-top: $gutter-small;
     border: none;
     border-radius: 5px;
 }
@@ -126,15 +130,16 @@ label {
     color: $lightWhite;
 }
 
-input[type="submit"] {
-    width: 100px;
-    height: 40px;
-    background-color: $red;
-    margin : $gutter-medium 0 0 0;
-    color: $lightWhite;
-    border: none;
+.isLogged {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: $gutter-big;
+    gap: $gutter-medium;
+    width: 100%;
+    background-color: $lightWhite;
     border-radius: 5px;
-    cursor: pointer;
 }
 
 // transition nested elements

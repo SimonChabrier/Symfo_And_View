@@ -14,7 +14,9 @@ export default createStore ({
     user: {},
     searchUsers : [],
     loggedIn: false,
-    adminName:'simon',
+    adminName:'admin',
+    errors: '',
+    loggedInUser: ''
   },
 
   // les getters permettent de récupérer des données du state dans son contexte et son état actuel
@@ -35,8 +37,9 @@ export default createStore ({
       state.allUsers = allUsers;
     },
     setUser(state, user) {
-      state.user = user;
       state.allUsers.push(user);
+      state.user = user;
+      
     },
     setSearchUsers(state, results) {
       state.searchUsers = results;
@@ -55,6 +58,15 @@ export default createStore ({
     incrementCount(state) {
       state.count = state.count + 1;
     },
+    catchErrors(state, errors) {
+      state.errors = errors;
+    },
+    setLoggedIn(state, loggedIn) {
+      state.loggedIn = loggedIn;
+    },
+    setLoggedInUser(state, user) {
+      state.loggedInUser = user;
+    }
 
     
   },
@@ -66,20 +78,39 @@ export default createStore ({
     // actuellement route API publique => pas besoin de token
     // mais si je veux la sécuriser le token est ici dans le header..
     async fetchUsers(context) {
-      const headers = authServices.checkAuth();
-      const response = (await axios.get (API_ROOT_URL, { headers })).data
-      context.commit('setUsers', response);
-      context.commit('setCount', response.length);
-      console.log(context.state.allUsers);
-      // set loggedIn to true if token exists
-      authServices.checkToken() === true ? context.state.loggedIn = true : context.state.loggedIn = false;
+      const headers = authServices.authenticateUser();
+      
+      try { await axios.get (API_ROOT_URL, { headers })
+      .then(response => {
+          if (response.status === 200) {
+            context.commit('setUsers', response.data);
+            context.commit('setCount', response.data.length);
+            console.log(context.state.allUsers);
+            // set loggedIn to true if token exists
+              if(authServices.checkToken() === true && localStorage.getItem('username')){
+                context.commit('setLoggedIn', true);
+                context.commit('setLoggedInUser', localStorage.getItem('username'));
+              } else {
+                context.commit('setLoggedIn', false);
+              }
+          }
+        });
+      } catch (error) {
+        if (error.response) {
+          context.commit('catchErrors', `Erreur Code : ${error.response.data.status}`);
+          // console.log(context.state.errors);
+          // console.log(error.response.data);
+          // console.log(error.response.status);
+          // console.log(error.response.headers);
+        }
+      }
     },
  
     // fetch un user par son id
     // actuellement route API publique => pas besoin de token
     // mais si je veux la sécuriser le token est ici dans le header..
     async fetchUser(context, id) {
-      const headers = authServices.checkAuth();
+      const headers = authServices.authenticateUser();
       const response = (await axios.get (API_ROOT_URL + '/' + id, { headers })).data
       context.commit('setUser', response);
       console.log(context.state.user);
@@ -88,12 +119,13 @@ export default createStore ({
     // delete un user par son id
     // actuellement route API sécurisée qui demande le Token
     async deleteUser(context, id) {
-      const headers = authServices.checkAuth();
+      const headers = authServices.authenticateUser();
       // supprime l'utilisateur de la base de données
       const response = (await axios.delete (API_ROOT_URL + '/delete/' + id, { headers })).data
       // met à jour le compteur de users ne enlevant 1
       context.commit('decrementCount');
       // retourne un message de confirmation
+      console.log(response)
       context.commit('confirmDelete', `L'utilisateur ${response.username} a bien été supprimé`);
       // supprimer l'utilisateur supprimé si il est dans le tableau des résultats de recherche
       if(context.state.searchUsers.length > 0) {
@@ -126,11 +158,6 @@ export default createStore ({
       authServices.killAuth();
       context.state.loggedIn = false;
     },
-
-    login(context, user) {
-      authServices.setAuth(user);
-      context.state.loggedIn = true;
-    }
   },
 
 })

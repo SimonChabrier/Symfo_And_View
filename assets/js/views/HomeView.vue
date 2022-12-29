@@ -1,12 +1,12 @@
 <template>
     <div class="homeView">
 
-        <!-- Search input  -->
+        <!-- Bloc Search input  -->
         <div class="search">
             <input type="text" placeholder="Rechercher un utilisateur" v-model="search" @input="getSearchDatas">
         </div>
 
-        <!-- Search results  -->
+        <!-- Bloc Search results  -->
 
         <Transition duration="550" name="nested">
             <div class="results" v-if="$store.state.searchUsers.length">
@@ -24,17 +24,17 @@
             </div>
         </Transition>
 
-        <!-- Login Form component -->
+        <!-- Bloc Login Form component -->
 
         <div>
             <LoginFormComponent />
         </div>
 
-        <!-- delete conformation message -->
+        <!-- Bloc delete confirmation message -->
 
         <Transition duration="550" name="nested">
             <div class="deleteMessage" v-if="$store.state.deleteMessage">
-                <button class="close" aria-label='close message' v-if="user.username != $store.state.adminName" 
+                <button class="close" aria-label='close message' v-if="user?.username != $store.state.adminName" 
                     @click = "closeDeleteMessage()" 
                     type='button'> X
                 </button>
@@ -44,7 +44,7 @@
             </div>
         </Transition>
 
-        <!-- new user created message -->
+        <!-- Bloc user created message -->
 
         <Transition duration="550" name="nested">
             <div class="lastUser" v-if="$store.state.user.username">
@@ -58,9 +58,16 @@
             </div>
         </Transition>
 
-        <!-- user list  -->
+        <!-- Bloc user list  -->
 
-        <div class="usersList">
+         <!-- erros message on fetch  -->
+
+         <div class="errors" v-if="$store.state.errors">
+            <span>{{ $store.state.errors }}</span>
+        </div>
+
+        <!-- user list  -->
+        <div class="usersList" v-else>
 
             <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }}</h1>
 
@@ -81,6 +88,8 @@
                 </TransitionGroup>
             </div>
         </div>
+
+        <!-- Bloc inscription  -->
 
         <div class="register" @submit.prevent="register">
                 
@@ -147,7 +156,10 @@ export default {
     methods : {
         register () { 
             this.$store.dispatch('registerUser', this.getFormDatas)
-            this.$store.dispatch('fetchUsers')
+            setTimeout(() => {
+                this.$store.dispatch('fetchUsers')
+            }, 100);
+
             this.resetForm()
             // this.lastUser = this.$store.state.user;
             // console.log(this.lastUser)
@@ -177,6 +189,7 @@ export default {
         getSearchDatas () { 
             this.$store.dispatch('searchUser', this.search)
         },
+
     },
     
     /////////////////// lifecycle hooks dans l'ordre d'exécution  ///////////////////
@@ -217,6 +230,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.errors {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: $red;
+    margin-bottom: $gutter-big;
+
+    & span {
+        font-size: 1.5rem;
+        color: $lightWhite;
+        margin-top: $gutter-big;
+        margin-bottom: $gutter-big;
+    }
+}
 
 .usersList {
     display: flex;
@@ -226,7 +253,6 @@ export default {
     background-color: $mediumBlue;
 
     & .title {
-        font-size: large;
         font-size: 1.5rem;
         color: $lightWhite;
         margin-top: $gutter-big;
