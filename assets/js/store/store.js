@@ -16,6 +16,7 @@ export default createStore ({
     loggedIn: false,
     adminName:'admin',
     errors: '',
+    loggedInUser: ''
   },
 
   // les getters permettent de récupérer des données du state dans son contexte et son état actuel
@@ -62,6 +63,9 @@ export default createStore ({
     },
     setLoggedIn(state, loggedIn) {
       state.loggedIn = loggedIn;
+    },
+    setLoggedInUser(state, user) {
+      state.loggedInUser = user;
     }
 
     
@@ -83,8 +87,9 @@ export default createStore ({
             context.commit('setCount', response.data.length);
             console.log(context.state.allUsers);
             // set loggedIn to true if token exists
-              if(authServices.checkToken() === true){
+              if(authServices.checkToken() === true && localStorage.getItem('username')){
                 context.commit('setLoggedIn', true);
+                context.commit('setLoggedInUser', localStorage.getItem('username'));
               } else {
                 context.commit('setLoggedIn', false);
               }
@@ -153,11 +158,6 @@ export default createStore ({
       authServices.killAuth();
       context.state.loggedIn = false;
     },
-
-    login(context, user) {
-      authServices.setAuth(user);
-      context.state.loggedIn = true;
-    }
   },
 
 })

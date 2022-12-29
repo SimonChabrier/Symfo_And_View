@@ -19,6 +19,7 @@ async getAuth(user) {
     return axios.post(API_URL, data)
     .then(response => { 
         localStorage.setItem('token', JSON.stringify(response.data.token)); 
+        localStorage.setItem('username', JSON.stringify(response.data.username)); 
     })
 },
 
@@ -64,6 +65,7 @@ authenticateUser() {
     // sinon on retourne un objet vide
     return {};
 },
+
 
 }
 
