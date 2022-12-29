@@ -1,5 +1,6 @@
 <template>
     <div class="homeView">
+
         <!-- Search input  -->
         <div class="search">
             <input type="text" placeholder="Rechercher un utilisateur" v-model="search" @input="getSearchDatas">
@@ -15,7 +16,7 @@
                         {{ user.username }}
                     </router-link>
                         
-                    <button aria-label='delete item' v-if="user.username != $store.state.adminName" 
+                    <button aria-label='delete user' v-if="user.username != $store.state.adminName" 
                         @click = "deleteUser(user.id)" 
                         type='button'> X
                     </button>
@@ -25,7 +26,7 @@
 
         <!-- Login Form component -->
 
-        <div class="login">
+        <div>
             <LoginFormComponent />
         </div>
 
@@ -33,7 +34,7 @@
 
         <Transition duration="550" name="nested">
             <div class="deleteMessage" v-if="$store.state.deleteMessage">
-                <button class="close" aria-label='close message'
+                <button class="close" aria-label='close message' v-if="user.username != $store.state.adminName" 
                     @click = "closeDeleteMessage()" 
                     type='button'> X
                 </button>
@@ -46,7 +47,7 @@
         <!-- new user created message -->
 
         <Transition duration="550" name="nested">
-            <div class="last" v-if="$store.state.user.username">
+            <div class="lastUser" v-if="$store.state.user.username">
                 <button class="close" aria-label='close message'
                     @click = "closeNewUserCreatedMessage(event)" 
                     type='button'> X
@@ -59,15 +60,15 @@
 
         <!-- user list  -->
 
-        <div class="home">
+        <div class="usersList">
 
-            <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }} </h1>
+            <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }}</h1>
 
-            <div class="users" v-if="$store.state.allUsers.length > 0">
+            <div class="userItem" v-if="$store.state.allUsers.length > 0">
                 <TransitionGroup name="list" tag="ul">
                     <li v-for="user in $store.state.allUsers" :key="user.id">
                         
-                            <button v-if="user.username != $store.state.adminName && $store.state.loggedIn === true" aria-label='delete item' 
+                            <button v-if="user.username != $store.state.adminName && $store.state.loggedIn === true" aria-label='delete user item' 
                                 @click = " deleteUser(user.id) " 
                                 type='button'> X
                             </button>
@@ -101,7 +102,7 @@
                 <input type="password" placeholder="Confirm Password" v-model="confirmPassword">
                 
                 <button-component 
-                    @click="$store.dispatch('fetchUsers')" 
+                    @click="''" 
                     :text="'inscription'" 
                     :color="'red'">
                 </button-component>
@@ -145,7 +146,8 @@ export default {
 
     methods : {
         register () { 
-            this.$store.dispatch('registerUser', this.getFormDatas) 
+            this.$store.dispatch('registerUser', this.getFormDatas)
+            this.$store.dispatch('fetchUsers')
             this.resetForm()
             // this.lastUser = this.$store.state.user;
             // console.log(this.lastUser)
@@ -216,7 +218,7 @@ export default {
 
 <style lang="scss" scoped>
 
-.home {
+.usersList {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -238,7 +240,7 @@ export default {
     }
 }
 
-.users {
+.userItem {
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
@@ -317,7 +319,7 @@ label {
     color: $lightWhite;
 }
 
-.last {
+.lastUser {
     position: relative;
     display: flex;
     justify-content: center;

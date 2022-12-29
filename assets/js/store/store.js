@@ -70,11 +70,9 @@ export default createStore ({
       const response = (await axios.get (API_ROOT_URL, { headers })).data
       context.commit('setUsers', response);
       context.commit('setCount', response.length);
+      console.log(context.state.allUsers);
       // set loggedIn to true if token exists
-
-      if(authServices.checkToken() === true) {
-        context.state.loggedIn = true;
-      }
+      authServices.checkToken() === true ? context.state.loggedIn = true : context.state.loggedIn = false;
     },
  
     // fetch un user par son id
@@ -84,6 +82,7 @@ export default createStore ({
       const headers = authServices.checkAuth();
       const response = (await axios.get (API_ROOT_URL + '/' + id, { headers })).data
       context.commit('setUser', response);
+      console.log(context.state.user);
     },
 
     // delete un user par son id
@@ -132,9 +131,9 @@ export default createStore ({
       authServices.setAuth(user);
       context.state.loggedIn = true;
     }
-
-   
   },
+
+})
 
   // les modules permettent de découper le store en plusieurs parties
   // https://vuex.vuejs.org/guide/modules.html
@@ -149,7 +148,8 @@ export default createStore ({
   // const moduleB = {
   //   state: () => ({ ... }),
   //   mutations: { ... },
-  //   actions: { ... }
+  //   actions: { ... },
+  //   getters: { ... }
   // }
   
   // const store = createStore({
@@ -161,5 +161,3 @@ export default createStore ({
   
   // store.state.a // -> `moduleA`'s state
   // store.state.b // -> `moduleB`'s state
-
-})

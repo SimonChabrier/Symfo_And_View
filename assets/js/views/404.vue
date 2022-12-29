@@ -1,14 +1,30 @@
 <template>
     <div class="notfound">
-        <span>{{ message }}</span>
+        <h1>{{ message }}</h1>
+         <!-- back to home button on router link -->
+        <div class="back-to-home">
+            <router-link to="/">
+                <button-component 
+                        @click="''" 
+                        :text="'Retour à l\'accueil'" 
+                        :color="'green'">
+                    </button-component>
+            </router-link>
+        </div>
     </div>
 </template>
 
 <script>
 
+import ButtonComponent from '@comp/elements/ButtonComponent.vue'
+
 export default {
 
     name: 'error404',
+
+    components: {
+        ButtonComponent
+    },
 
     data() {
         return {
@@ -28,18 +44,19 @@ export default {
 <style lang="scss" scoped>
     .notfound {
         background-color: $mediumBlue;
-        padding: 1rem;
         text-align: center;
-        padding: 0;
+        width: 100%;
         height: 400px;
         display: flex;
         justify-content: center;
+        flex-direction: column;
         align-items: center;
         margin: 0 auto;
     }
 
-    span {
-        font-size: 4rem;
+    h1 {
+        font-size: 2rem;
         color: $lightWhite;
+        padding: $gutter-big;
     }
 </style>
