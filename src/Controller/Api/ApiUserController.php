@@ -114,12 +114,16 @@ class ApiUserController extends AbstractController
             return new JsonResponse($errorsString, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        // save the new user in the database
         $doctrine->persist($user);
         $doctrine->flush();
 
-        $userToSerialize = $userRepository->findOneBy([], ['id' => 'DESC']);
-        $JsonManager->addUserToJsonFile($userToSerialize, 'user:read', 'users.json', 'json');
-
+        // add the new user entry created in database to the json file 
+        if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
+            $userToSerialize = $userRepository->findOneBy([], ['id' => 'DESC']);
+            $JsonManager->addUserToJsonFile($userToSerialize, 'user:read', 'users.json', 'json');
+        }
+       
         return $this->json(
             $user,
             Response::HTTP_CREATED,
@@ -152,12 +156,15 @@ class ApiUserController extends AbstractController
             return new JsonResponse($errorsString, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        // save the user in the database
         $doctrine->persist($user);
         $doctrine->flush();
 
         // update the json file using the service updateUserToJsonFile
-        $JsonManager->updateUserInJsonFile($user, 'user:read', 'users.json', 'json');
-
+        if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
+            $JsonManager->updateUserInJsonFile($user, 'user:read', 'users.json', 'json');
+        }
+    
         return $this->json(
             $user,
             Response::HTTP_OK,
@@ -177,8 +184,12 @@ class ApiUserController extends AbstractController
     ): Response
     {   
 
-        $JsonManager->deleteUserFromJsonFile($user->getId(), 'users.json');
+        // update the json file using the service updateUserToJsonFile
+        if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
+            $JsonManager->deleteUserFromJsonFile($user->getId(), 'users.json');
+        }
 
+        // delete user from database
         $doctrine->remove($user);
         $doctrine->flush();
 

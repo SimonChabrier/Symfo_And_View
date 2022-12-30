@@ -32,7 +32,7 @@ export default createStore ({
   // les mutations permettent de modifier le state de manière synchrone
   mutations: {
 
-    // Gestion des users
+    // Gestion des users en base de données
     setUsers(state, allUsers) {
       state.allUsers = allUsers;
     },
@@ -57,9 +57,13 @@ export default createStore ({
     incrementCount(state) {
       state.count = state.count + 1;
     },
+
+    // gestion des erreurs
     catchErrors(state, errors) {
       state.errors = errors;
     },
+
+    // gestion de l'authentification de l'utilisateur connecté
     setLoggedIn(state, loggedIn) {
       state.loggedIn = loggedIn;
     },
