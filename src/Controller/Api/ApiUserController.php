@@ -15,9 +15,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-use App\Service\ObjectToJsonFile;
-
-
+// use the JsonManager service to create the json file with the users data and don't use the database if the json file exist
+use App\Service\JsonManager;
 
 class ApiUserController extends AbstractController
 {   
@@ -28,56 +27,78 @@ class ApiUserController extends AbstractController
      * Retourne l'ensemble des utilisateurs
      * @Route("/api/users", name="api.get.users", methods={"GET"})
      */
-    public function apiGet(UserRepository $userRepository, ObjectToJsonFile $objectToJsonFile): Response
+    public function getAllUsers(UserRepository $userRepository, JsonManager $JsonManager): Response
     {   
-
         // check if the users.json file exists in the public folder
         if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
-            // get the users from the json file
+            $message = 'ALl users from json file';
+            // get all users from the json file
             $usersFromJsonFile = file_get_contents($this->getParameter('kernel.project_dir').'/public/json/users.json');
             $users = json_decode($usersFromJsonFile, true);
+
         } else {
+            $message = 'ALl users from database';
             // get all users from the database and create the json file
             $usersFromDataBase = $userRepository->findAll();
-            $users = $objectToJsonFile->convertAndSave($usersFromDataBase, 'user:read', 'users.json', 'json'); 
+            $users = $JsonManager->jsonFileInit($usersFromDataBase, 'user:read', 'users.json', 'json'); 
         }
 
+        // retrun json with message and users
         return $this->json(
-            $users,
-            Response::HTTP_OK, 
-            // https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
-            [ 'Access-Control-Allow-Origin' => '*'], 
+            [
+                'message' => $message,
+                'users' => $users
+            ],
+            Response::HTTP_OK,
+            [],
             ['groups' => 'user:read']
         );
+
+        
     }
 
     /**
      * Retourne un utilisateur en fonction de son id
      * @Route("/api/users/{id}", name="api.get.user", methods={"GET"})
      */
-    public function apiGetUser(User $user): Response
-    {
-        if ($user) {
-            return $this->json(
-                $user,
-                Response::HTTP_OK,
-                [],
-                ['groups' => 'user:read']
-            );
+    public function getUserbyId(Request $request, JsonManager $JsonManager, UserRepository $userRepository): Response
+    {   
+
+        // if json file exists
+        if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
+            
+            $message = 'user from json file';
+            $userId = $request->attributes->get('id');
+            $user = $JsonManager->searchUserInJsonFile($userId, 'users.json');
+
+        } else {
+
+            $message = 'user from database';
+            $user = $userRepository->find($request->attributes->get('id'));
         }
+
+        return $this->json(
+            [
+                'message' => $message,
+                'user' => $user
+            ],
+            Response::HTTP_OK,
+            [],
+            ['groups' => 'user:read']
+        );
     }
 
     /**
      * Enregistrer un nouvel utilisateur
      * @Route("/api/users/register", name="api.post.user", methods={"POST"})
      */
-    public function apiPostUser(
+    public function postUser(
         EntityManagerInterface $doctrine,
         Request $request,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
         UserRepository $userRepository,
-        ObjectToJsonFile $objectToJsonFile
+        JsonManager $JsonManager
     ): Response
     {   
         $data = $request->getContent();
@@ -95,9 +116,9 @@ class ApiUserController extends AbstractController
 
         $doctrine->persist($user);
         $doctrine->flush();
-        
+
         $userToSerialize = $userRepository->findOneBy([], ['id' => 'DESC']);
-        $objectToJsonFile->addNewUserToJsonFile($userToSerialize, 'user:read', 'users.json', 'json');
+        $JsonManager->addUserToJsonFile($userToSerialize, 'user:read', 'users.json', 'json');
 
         return $this->json(
             $user,
@@ -111,13 +132,13 @@ class ApiUserController extends AbstractController
      * Mettre à jour un utilisateur
      * @Route("/api/users/{id}", name="api.patch.user", methods={"PATCH"})
      */
-    public function apiPatchUser(
+    public function patchUser(
         User $user,
         EntityManagerInterface $doctrine,
         Request $request,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-        ObjectToJsonFile $objectToJsonFile
+        JsonManager $JsonManager
     ): Response
     {   
         $data = $request->getContent();
@@ -135,7 +156,7 @@ class ApiUserController extends AbstractController
         $doctrine->flush();
 
         // update the json file using the service updateUserToJsonFile
-        $objectToJsonFile->updateUserInJsonFile($user, 'user:read', 'users.json', 'json');
+        $JsonManager->updateUserInJsonFile($user, 'user:read', 'users.json', 'json');
 
         return $this->json(
             $user,
@@ -149,14 +170,14 @@ class ApiUserController extends AbstractController
      * Supprimer un utilisateur
      * @Route("/api/users/delete/{id}", name="api.delete.user", methods={"DELETE"})
      */
-    public function apiDeleteUser(
+    public function deleteUser(
         User $user,
         EntityManagerInterface $doctrine,
-        ObjectToJsonFile $objectToJsonFile
+        JsonManager $JsonManager
     ): Response
     {   
 
-        $objectToJsonFile->deleteUserFromJsonFile($user->getId(), 'users.json');
+        $JsonManager->deleteUserFromJsonFile($user->getId(), 'users.json');
 
         $doctrine->remove($user);
         $doctrine->flush();

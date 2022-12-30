@@ -6,65 +6,50 @@ namespace App\Service;
 // this class get objet in entry and return a json file in the public folder
 
 use Symfony\Component\Serializer\SerializerInterface;
-use App\Repository\UserRepository;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class ObjectToJsonFile extends AbstractController
+class JsonManager extends AbstractController
 {
     private $serializer;
-    private $userRepository;
 
-    public function __construct(SerializerInterface $serializer, UserRepository $userRepository)
+    public function __construct(SerializerInterface $serializer)
     {
         $this->serializer = $serializer;
-        $this->userRepository = $userRepository;
     }
 
-    public function convertAndSave($object, $context, $fileName, $format)
+    // init the json file if json file doesn't exist
+    public function jsonFileInit($object, $context, $fileName, $format)
     {
-        //* 1 - Convert $object in valid json data using the serialize method of SerializerInterface and the $context 
         $object = $this->serializer->serialize($object, $format, ['groups' => $context]);
-        // create a json file with the json data
         file_put_contents($fileName, $object);
-        // get the App public folder
         $publicDirectory = $this->getParameter('kernel.project_dir').'/public';
-        // create a directory only if json directory doesn't exist
+
         if (!file_exists($publicDirectory.'/json')) {
             mkdir($publicDirectory.'/json', 0777, true);
         }
-        // move the json file to the public folder using rename($from, $to)
+
         rename($publicDirectory.'/'.$fileName, $publicDirectory.'/json/'.$fileName);
 
-        //* 2 - Get the json file from the public folder
         $jsonFile =  file_get_contents($publicDirectory.'/json/'.$fileName);
-        // return the json file in valid json data
         return json_decode($jsonFile, true);
     }
 
      // add new object to the json file if json file exist
-    public function addNewUserToJsonFile($object, $context, $fileName, $format)
+    public function addUserToJsonFile($object, $context, $fileName, $format)
     {
-        // get the App public folder
         $publicDirectory = $this->getParameter('kernel.project_dir').'/public';
-        // get the json file from the public folder
         $jsonFile =  file_get_contents($publicDirectory.'/json/'.$fileName);
-        // convert the json file in valid json data
         $jsonFile = json_decode($jsonFile, true);
-        // convert the new object in valid json data
-        $object = $this->serializer->serialize($object, $format, ['groups' => $context]);
 
-        // convert the new object in valid json data
+        $object = $this->serializer->serialize($object, $format, ['groups' => $context]);
         $object = json_decode($object, true);
-        // add the new object to the json file
+
         array_push($jsonFile, $object);
-        // convert the json file in valid json data
         $jsonFile = json_encode($jsonFile);
-        // create a json file with the json data
+
         file_put_contents($fileName, $jsonFile);
-        // move the json file to the public folder using rename($from, $to)
         rename($publicDirectory.'/'.$fileName, $publicDirectory.'/json/'.$fileName);
-        // return the json file in valid json data
+
         return json_decode($jsonFile, true);
     }
 
@@ -110,6 +95,27 @@ class ObjectToJsonFile extends AbstractController
             rename($publicDirectory.'/'.$fileName, $publicDirectory.'/json/'.$fileName);
 
             return json_decode($jsonFile, true);
+        }
+
+        return false;
+    }
+
+    // search user by id in the json file if json file exist
+    public function searchUserInJsonFile($id, $fileName)
+    {
+        $publicDirectory = $this->getParameter('kernel.project_dir').'/public';
+        $jsonFile =  file_get_contents($publicDirectory.'/json/'.$fileName);
+       
+        if($jsonFile) {
+            $jsonFile = json_decode($jsonFile, true);
+
+            // find user by id in the json file and return it
+            foreach ($jsonFile as $user) {
+
+                if ($user['id'] == $id) {
+                    return $user;
+                }
+            }
         }
 
         return false;
