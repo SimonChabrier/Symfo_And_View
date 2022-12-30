@@ -196,6 +196,7 @@ class ApiUserController extends AbstractController
         return $this->json(
             [
                 'message' => 'Utilisateur supprimé', 
+                // username only for display the info message in front (no security issue here)
                 'username' => $user->getUsername(),
             ],
             Response::HTTP_OK,
