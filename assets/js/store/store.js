@@ -39,7 +39,6 @@ export default createStore ({
     setUser(state, user) {
       state.allUsers.push(user);
       state.user = user;
-      
     },
     setSearchUsers(state, results) {
       state.searchUsers = results;
@@ -152,6 +151,10 @@ export default createStore ({
         const results = '';
         context.commit('setSearchUsers', results);
       }
+    },
+
+    resetUser(context) {
+      context.commit('setUser', '');
     },
 
     logout(context) {

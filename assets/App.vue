@@ -1,4 +1,5 @@
 <template>
+  <p class="info">login: admin / password: password</p>
     <NavBarComponant />
       <router-view />
     <FooterComponent />
@@ -105,6 +106,14 @@ a {
   &:active {
     color: $orange;
   }
+};
+
+.info {
+  color: $lightWhite;
+  font-size: 0.8rem;
+  text-align: center;
+  padding: $gutter-small;
+  background-color: $darkGray;
 };
 
 // media queries

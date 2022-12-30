@@ -14,14 +14,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+
 
 
 class ApiUserController extends AbstractController
 {   
    
-//////////////////////////////////////////////* USER CRUD 
+//////////////////////////////////////////////* USER API CRUD 
 
     /**
      * Retourne l'ensemble des utilisateurs
@@ -29,13 +28,46 @@ class ApiUserController extends AbstractController
      */
     public function apiGet(UserRepository $userRepository): Response
     {   
+        // get all users from the database
+        $users = $userRepository->findAll();
+        // prepare $susers datas to be encoded in a json file 
+        $users = $this->get('serializer')->normalize($users, null, ['groups' => 'user:read']);
+        // create a json file with the users data from the database
+        $json = json_encode($users);
+        file_put_contents('users.json', $json);
+        // save json file in the public folder
+        $publicDirectory = $this->getParameter('kernel.project_dir').'/public';
+        // create a directory if json directory doesn't exist
+        if (!file_exists($publicDirectory.'/json')) {
+            mkdir($publicDirectory.'/json', 0777, true);
+        }
+        // move the json file to the public folder
+        rename($publicDirectory.'/users.json', $publicDirectory.'/json/users.json');
+        // get the json file from the public folder
+        $jsonFile = file_get_contents($publicDirectory.'/json/users.json');
+        // decode the json file
+        $jsonDecoded = json_decode($jsonFile, true);
+        // return the json file
         return $this->json(
-            $userRepository->findAll(),
+            $jsonDecoded,
             Response::HTTP_OK, 
             // https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
             [ 'Access-Control-Allow-Origin' => '*'], 
             ['groups' => 'user:read']
         );
+
+        //convert the file data in associative array
+        $data = json_decode($json, true);
+
+
+
+        // return $this->json(
+        //     $userRepository->findAll(),
+        //     Response::HTTP_OK, 
+        //     // https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
+        //     [ 'Access-Control-Allow-Origin' => '*'], 
+        //     ['groups' => 'user:read']
+        // );
     }
 
     /**
@@ -146,93 +178,6 @@ class ApiUserController extends AbstractController
         );
     }
 
-//////////////////////////////////////////////* USER ACTIONS
-    
-    /**
-     * Permet d'enregistrer un utilisateur
-     * @Route("/api/register", name="api_user_register", methods={"POST"})
-     */
-    public function apiUserRegister(
-        EntityManagerInterface $doctrine,
-        Request $request,
-        SerializerInterface $serializer,
-        ValidatorInterface $validator
-    ): Response
-    {   
-    
-        $data = $request->getContent();
-        $user = $serializer->deserialize($data, User::class, 'json');
-        $errors = $validator->validate($user);
 
-        // hash du mot de passe depuis la requête
-        $user->setPassword(
-            password_hash($user->getPassword(), PASSWORD_BCRYPT)
-        );
-
-        if (count($errors) > 0) {
-            $errorsString = (string) $errors;
-            return new JsonResponse($errorsString, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        $doctrine->persist($user);
-        $doctrine->flush();
-
-        return $this->json(
-            $user,
-            Response::HTTP_CREATED,
-            [],
-            ['groups' => ['user:read']]
-        );
-    }
-
-    // json loginroute
-
-    /**
-     * Permet de se connecter 
-     * crée et retourne un Jwt Token
-     * connecte aussil'utilisateur dans symfony.
-     * via le firewall main et et mon custom authenticator
-     * 
-     * @Route("/api/login", name="api.login", methods={"POST"})
-     */
-    public function apiLogin(UserInterface $user, JWTTokenManagerInterface $JWTManager)
-    {       
-            // Format de données à envoyer en POST
-            // login dépend de la propriété donnée au pramètre app_user_provider dans security.yaml pour le firewall main
-            // {
-            //     "security": {
-            //         "credentials": {
-            //             "login": "simon",
-            //             "password": "password"
-            //         }
-            //     }
-            // }
-
-            $user = $this->getUser();
-    
-            return new JsonResponse([
-                'username' => $user->getUserIdentifier(),
-                'roles' => $user->getRoles(),
-                'token' => $JWTManager->create($user)
-            ]);
-    }
-
-    // json logout route
-
-    /**
-     * Permet de se déconnecter
-     * @Route("/api/logout", name="api.logout", methods={"POST"})
-     */
-    public function apiLogout()
-    {
-        // le logout est géré par le firewall main et le custom authenticator
-        // il suffit de faire une requête POST sur cette route pour se déconnecter
-        // le token est invalide après déconnexion
-
-        return new JsonResponse([
-            'message' => 'Déconnexion réussie'
-        ]);
-        
-    }
 
 }
