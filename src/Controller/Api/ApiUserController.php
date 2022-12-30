@@ -15,6 +15,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+use App\Service\ObjectToJsonFile;
+
 
 
 class ApiUserController extends AbstractController
@@ -26,48 +28,27 @@ class ApiUserController extends AbstractController
      * Retourne l'ensemble des utilisateurs
      * @Route("/api/users", name="api.get.users", methods={"GET"})
      */
-    public function apiGet(UserRepository $userRepository): Response
+    public function apiGet(UserRepository $userRepository, ObjectToJsonFile $objectToJsonFile): Response
     {   
-        // get all users from the database
-        $users = $userRepository->findAll();
-        // prepare $susers datas to be encoded in a json file 
-        $users = $this->get('serializer')->normalize($users, null, ['groups' => 'user:read']);
-        // create a json file with the users data from the database
-        $json = json_encode($users);
-        file_put_contents('users.json', $json);
-        // save json file in the public folder
-        $publicDirectory = $this->getParameter('kernel.project_dir').'/public';
-        // create a directory if json directory doesn't exist
-        if (!file_exists($publicDirectory.'/json')) {
-            mkdir($publicDirectory.'/json', 0777, true);
+
+        // check if the users.json file exists in the public folder
+        if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
+            // get the users from the json file
+            $usersFromJsonFile = file_get_contents($this->getParameter('kernel.project_dir').'/public/json/users.json');
+            $users = json_decode($usersFromJsonFile, true);
+        } else {
+            // get all users from the database and create the json file
+            $usersFromDataBase = $userRepository->findAll();
+            $users = $objectToJsonFile->convertAndSave($usersFromDataBase, 'user:read', 'users.json', 'json'); 
         }
-        // move the json file to the public folder
-        rename($publicDirectory.'/users.json', $publicDirectory.'/json/users.json');
-        // get the json file from the public folder
-        $jsonFile = file_get_contents($publicDirectory.'/json/users.json');
-        // decode the json file
-        $jsonDecoded = json_decode($jsonFile, true);
-        // return the json file
+
         return $this->json(
-            $jsonDecoded,
+            $users,
             Response::HTTP_OK, 
             // https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
             [ 'Access-Control-Allow-Origin' => '*'], 
             ['groups' => 'user:read']
         );
-
-        //convert the file data in associative array
-        $data = json_decode($json, true);
-
-
-
-        // return $this->json(
-        //     $userRepository->findAll(),
-        //     Response::HTTP_OK, 
-        //     // https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
-        //     [ 'Access-Control-Allow-Origin' => '*'], 
-        //     ['groups' => 'user:read']
-        // );
     }
 
     /**
@@ -94,7 +75,9 @@ class ApiUserController extends AbstractController
         EntityManagerInterface $doctrine,
         Request $request,
         SerializerInterface $serializer,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        UserRepository $userRepository,
+        ObjectToJsonFile $objectToJsonFile
     ): Response
     {   
         $data = $request->getContent();
@@ -112,6 +95,9 @@ class ApiUserController extends AbstractController
 
         $doctrine->persist($user);
         $doctrine->flush();
+        
+        $userToSerialize = $userRepository->findOneBy([], ['id' => 'DESC']);
+        $objectToJsonFile->addNewUserToJsonFile($userToSerialize, 'user:read', 'users.json', 'json');
 
         return $this->json(
             $user,
@@ -130,7 +116,8 @@ class ApiUserController extends AbstractController
         EntityManagerInterface $doctrine,
         Request $request,
         SerializerInterface $serializer,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        ObjectToJsonFile $objectToJsonFile
     ): Response
     {   
         $data = $request->getContent();
@@ -147,6 +134,9 @@ class ApiUserController extends AbstractController
         $doctrine->persist($user);
         $doctrine->flush();
 
+        // update the json file using the service updateUserToJsonFile
+        $objectToJsonFile->updateUserInJsonFile($user, 'user:read', 'users.json', 'json');
+
         return $this->json(
             $user,
             Response::HTTP_OK,
@@ -161,9 +151,13 @@ class ApiUserController extends AbstractController
      */
     public function apiDeleteUser(
         User $user,
-        EntityManagerInterface $doctrine
+        EntityManagerInterface $doctrine,
+        ObjectToJsonFile $objectToJsonFile
     ): Response
     {   
+
+        $objectToJsonFile->deleteUserFromJsonFile($user->getId(), 'users.json');
+
         $doctrine->remove($user);
         $doctrine->flush();
 

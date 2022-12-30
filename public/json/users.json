@@ -1,1 +1,42 @@
-[{"id":11,"email":"admin@admin.fr","roles":["ROLE_ADMIN","ROLE_USER"],"isVerified":false,"username":"admin","slug":"admin","status":true,"createdAt":"2022-12-29T15:29:21+01:00","updateAt":"2022-12-29T15:29:53+01:00"},{"id":14,"email":"lycanyfypo@mailinator.com","roles":["ROLE_USER"],"isVerified":false,"username":"Ut et qui blanditiis","slug":"ut-et-qui-blanditiis","status":true,"createdAt":"2022-12-29T16:36:14+01:00","updateAt":"2022-12-29T16:36:14+01:00"},{"id":19,"email":"jaqynozi@mailinator.com","roles":["ROLE_USER"],"isVerified":false,"username":"gakuwyt","slug":"gakuwyt","status":true,"createdAt":"2022-12-29T17:23:19+01:00","updateAt":"2022-12-29T17:23:19+01:00"},{"id":21,"email":"wexuhas@mailinator.com","roles":["ROLE_USER"],"isVerified":false,"username":"Magnam deleniti expe","slug":"magnam-deleniti-expe","status":true,"createdAt":"2022-12-29T18:17:23+01:00","updateAt":"2022-12-29T18:17:23+01:00"},{"id":23,"email":"wejogavy@mailinator.com","roles":["ROLE_USER"],"isVerified":false,"username":"Quidem dolores et qu","slug":"quidem-dolores-et-qu","status":true,"createdAt":"2022-12-29T18:31:38+01:00","updateAt":"2022-12-29T18:31:38+01:00"},{"id":25,"email":"dume@mailinator.com","roles":["ROLE_USER"],"isVerified":false,"username":"Fuga Quisquam amet","slug":"fuga-quisquam-amet","status":true,"createdAt":"2022-12-29T18:42:54+01:00","updateAt":"2022-12-29T18:42:54+01:00"},{"id":26,"email":"quny@mailinator.com","roles":["ROLE_USER"],"isVerified":false,"username":"Facere et neque dese","slug":"facere-et-neque-dese","status":true,"createdAt":"2022-12-29T18:42:59+01:00","updateAt":"2022-12-29T18:42:59+01:00"},{"id":27,"email":"sojasiqite@mailinator.com","roles":["ROLE_USER"],"isVerified":false,"username":"Officia soluta nesci","slug":"officia-soluta-nesci","status":true,"createdAt":"2022-12-29T19:01:41+01:00","updateAt":"2022-12-29T19:01:41+01:00"},{"id":28,"email":"votyfadoki@mailinator.com","roles":["ROLE_USER"],"isVerified":false,"username":"Eveniet molestias a","slug":"eveniet-molestias-a","status":true,"createdAt":"2022-12-29T19:03:00+01:00","updateAt":"2022-12-29T19:03:00+01:00"},{"id":30,"email":"wegujuly@mailinator.com","roles":["ROLE_USER"],"isVerified":false,"username":"Do consequat Simili","slug":"do-consequat-simili","status":true,"createdAt":"2022-12-30T15:31:09+01:00","updateAt":"2022-12-30T15:31:09+01:00"},{"id":31,"email":"qeteco@mailinator.com","roles":["ROLE_USER"],"isVerified":false,"username":"Sunt quam et at por","slug":"sunt-quam-et-at-por","status":true,"createdAt":"2022-12-30T15:31:17+01:00","updateAt":"2022-12-30T15:31:17+01:00"}]
+[
+    {
+        "id": 11,
+        "email": "admin@admin.fr",
+        "roles": [
+            "ROLE_ADMIN",
+            "ROLE_USER"
+        ],
+        "isVerified": false,
+        "username": "admin",
+        "slug": "admin",
+        "status": true,
+        "createdAt": "2022-12-30T20:42:52+01:00",
+        "updateAt": "2022-12-30T20:42:52+01:00"
+    },
+    {
+        "id": 13,
+        "email": "vofixokyg@mailinator.com",
+        "roles": [
+            "ROLE_USER"
+        ],
+        "isVerified": false,
+        "username": "Proident illo molli",
+        "slug": "proident-illo-molli",
+        "status": true,
+        "createdAt": "2022-12-30T20:45:02+01:00",
+        "updateAt": "2022-12-30T20:45:02+01:00"
+    },
+    {
+        "id": 14,
+        "email": "padinit@mailinator.com",
+        "roles": [
+            "ROLE_USER"
+        ],
+        "isVerified": false,
+        "username": "Fugiat quod quis ven",
+        "slug": "fugiat-quod-quis-ven",
+        "status": true,
+        "createdAt": "2022-12-30T20:46:18+01:00",
+        "updateAt": "2022-12-30T20:46:18+01:00"
+    }
+]
