@@ -29,6 +29,27 @@ class ApiUserController extends AbstractController
      */
     public function getAllUsers(UserRepository $userRepository, JsonManager $JsonManager): Response
     {   
+
+        // if database is empty
+        if (count($userRepository->findAll()) == 0) {
+
+            // delete the json file if exist
+            if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
+                unlink($this->getParameter('kernel.project_dir').'/public/json/users.json');
+            }
+
+            // return json with message and empty array
+            return $this->json(
+                [
+                    'message' => 'No user in database',
+                    'users' => []
+                ],
+                Response::HTTP_OK,
+                [],
+                ['groups' => 'user:read']
+            );
+        }
+
         // check if the users.json file exists in the public folder
         if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
             $message = 'ALl users from json file';

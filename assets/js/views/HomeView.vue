@@ -342,7 +342,7 @@ label {
     font-size: 14px;
     margin-bottom: $gutter-small;
     font-weight: 200;
-    color: $darkGray;
+    color: $lightWhite;
 }
 
 .lastUser {
