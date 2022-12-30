@@ -1,0 +1,15 @@
+[
+    {
+        "id": 14,
+        "email": "admin@admin.fr",
+        "roles": [
+            "ROLE_USER"
+        ],
+        "isVerified": false,
+        "username": "admin",
+        "slug": "admin",
+        "status": true,
+        "createdAt": "2022-12-30T22:11:58+01:00",
+        "updateAt": "2022-12-30T22:11:58+01:00"
+    }
+]
