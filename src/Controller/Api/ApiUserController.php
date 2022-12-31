@@ -34,9 +34,9 @@ class ApiUserController extends AbstractController
         if (count($userRepository->findAll()) == 0) {
 
             // delete the json file if exist
-            if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
-                unlink($this->getParameter('kernel.project_dir').'/public/json/users.json');
-            }
+            // if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
+            //     unlink($this->getParameter('kernel.project_dir').'/public/json/users.json');
+            // }
 
             // return json with message and empty array
             return $this->json(
@@ -57,13 +57,7 @@ class ApiUserController extends AbstractController
             $usersFromJsonFile = file_get_contents($this->getParameter('kernel.project_dir').'/public/json/users.json');
             $users = json_decode($usersFromJsonFile, true);
 
-        } else {
-            $message = 'ALl users from database';
-            // get all users from the database and create the json file
-            $usersFromDataBase = $userRepository->findAll();
-            $users = $JsonManager->jsonFileInit($usersFromDataBase, 'user:read', 'users.json', 'json'); 
-        }
-
+        } 
         // retrun json with message and users
         return $this->json(
             [

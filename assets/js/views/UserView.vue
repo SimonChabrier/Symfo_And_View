@@ -33,7 +33,7 @@
             </li>
             <!-- delete user button -->
             <li>
-                <div v-if="$store.state.user.username != $store.state.adminName">
+                <div v-if="$store.state.user.username != $store.state.adminName && $store.state.loggedIn === true">
                     <input type="submit" value="Supprimer" @click.prevent="deleteUser">
                 </div>
             </li>
