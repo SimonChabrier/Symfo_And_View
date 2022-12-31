@@ -17,7 +17,7 @@
                         {{ user.username }}
                     </router-link>
                         
-                    <button aria-label='delete user' v-if="user.username != $store.state.adminName" 
+                    <button aria-label='delete user' v-if="user.username != $store.state.adminName && $store.state.loggedIn === true" 
                         @click = "deleteUser(user.id)" 
                         type='button'> X
                     </button>
