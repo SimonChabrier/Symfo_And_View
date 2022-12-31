@@ -166,7 +166,9 @@ export default createStore ({
       const users = context.state.allUsers.filter(user => user.id !== id);
       context.commit('setUsers', users);
       // supprime l'utilisateur de la page de détail si il est affiché
-      context.commit('setUser', '');
+      if(context.state.user.id === id){
+        context.commit('setUser', '');
+      }
     },
 
     // enregistrer un nouveau user
