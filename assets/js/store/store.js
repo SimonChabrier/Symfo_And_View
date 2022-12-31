@@ -91,7 +91,7 @@ export default createStore ({
             context.commit('setCount', response.data.users.length);
             // console.log(context.state.allUsers);
             // set loggedIn to true if token exists
-              if(authServices.checkToken() === true && localStorage.getItem('username')){
+              if(authServices.checkToken() === true){
                 context.commit('setLoggedIn', true);
                 context.commit('setLoggedInUser', localStorage.getItem('username'));
               } else {
@@ -120,6 +120,14 @@ export default createStore ({
           if (response.status === 200) {
             console.log(response.data);
             context.commit('setUser', response.data.user);
+
+            if(authServices.checkToken() === true){
+              context.commit('setLoggedIn', true);
+              context.commit('setLoggedInUser', localStorage.getItem('username'));
+            } else {
+              context.commit('setLoggedIn', false);
+            }
+
           }
         });
       } catch (error) {
@@ -154,8 +162,13 @@ export default createStore ({
         const results = context.state.searchUsers.filter(user => user.id !== id);
         context.commit('setSearchUsers', results);
       }
-      // je refectche l'ensemble des users pour mettre à jour le tableau des users dans le state et garder à jour l'affichage de HomeView
-      context.dispatch('fetchUsers');
+      // supprimer l'utilisateur supprimé du tableau des users
+      const users = context.state.allUsers.filter(user => user.id !== id);
+      context.commit('setUsers', users);
+      // supprime l'utilisateur de la page de détail si il est affiché
+      if(context.state.user.id === id){
+        context.commit('setUser', '');
+      }
     },
 
     // enregistrer un nouveau user
