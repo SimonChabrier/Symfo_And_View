@@ -94,7 +94,7 @@ class JsonManager extends AbstractController
             // So I need to reindex objects using  ----- array_values() ------ 
             // This will  preserve the initial array indexes notation :  [{...} {...}] like used in Front End 
             // json_encode only when some indexes are empty create a re-indexed json object like this {0: {}, 1: {}...}
-            // And the front end will be broken cause it wait a json object like this [{...} {...}]
+            // And the front end will be broken cause it wait a json object like this [{...} {...}] in ajax response
 
             $jsonFile = json_encode(array_values($jsonFile));
             file_put_contents($fileName, $jsonFile);
