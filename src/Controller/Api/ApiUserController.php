@@ -85,6 +85,9 @@ class ApiUserController extends AbstractController
     public function getUserbyId(Request $request, JsonManager $JsonManager, UserRepository $userRepository): Response
     {   
 
+        // get requested user id from the request object
+        $id = $request->attributes->get('id');
+
         // if json file exists
         if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
             
@@ -95,7 +98,11 @@ class ApiUserController extends AbstractController
         } else {
 
             $message = 'user from database';
-            $user = $userRepository->find($request->attributes->get('id'));
+            $user = $userRepository->find($id);
+        }
+
+        if(!$user){
+         $user = "Aucun User trouvé pour id: ".$id;
         }
 
         return $this->json(
