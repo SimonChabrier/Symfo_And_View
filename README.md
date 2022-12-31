@@ -1,6 +1,7 @@
-# Skeleton personnalisé.
+# https://vue-users.simschab.fr/
 
-Use it to start a project with a skeleton project.
+Symfony 5.4 and Vue 3 with Webpack Encore Bundle
+
 
 ## Available dependencies
 
