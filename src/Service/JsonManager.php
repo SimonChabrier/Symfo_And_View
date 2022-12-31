@@ -17,7 +17,15 @@ class JsonManager extends AbstractController
         $this->serializer = $serializer;
     }
 
-    // init the json file if json file doesn't exist
+    /**
+     * Create a json file from object or objects
+     *
+     * @param [type] $object
+     * @param [type] $context
+     * @param [type] $fileName
+     * @param [type] $format
+     * @return void
+     */
     public function jsonFileInit($object, $context, $fileName, $format)
     {
         $object = $this->serializer->serialize($object, $format, ['groups' => $context]);
@@ -34,7 +42,15 @@ class JsonManager extends AbstractController
         return json_decode($jsonFile, true);
     }
 
-     // add new object to the json file if json file exist
+    /**
+     * Add new object to the json file 
+     *
+     * @param [type] $object
+     * @param [type] $context
+     * @param [type] $fileName
+     * @param [type] $format
+     * @return void
+     */
     public function addUserToJsonFile($object, $context, $fileName, $format)
     {
         $publicDirectory = $this->getParameter('kernel.project_dir').'/public';
@@ -53,7 +69,15 @@ class JsonManager extends AbstractController
         return json_decode($jsonFile, true);
     }
 
-    // update user in the json file if json file exist
+    /**
+     * Update user in the json file
+     *
+     * @param [type] $object
+     * @param [type] $context
+     * @param [type] $fileName
+     * @param [type] $format
+     * @return void
+     */
     public function updateUserInJsonFile($object, $context, $fileName, $format)
     {
         $publicDirectory = $this->getParameter('kernel.project_dir').'/public';
@@ -76,7 +100,13 @@ class JsonManager extends AbstractController
         return json_decode($jsonFile, true);
     }
 
-    // Remove delete User in the json file if json file exist
+    /**
+     * Delete user from json file
+     *
+     * @param [type] $id
+     * @param [type] $fileName
+     * @return void
+     */
     public function deleteUserFromJsonFile($id, $fileName)
     {
         $publicDirectory = $this->getParameter('kernel.project_dir').'/public';
@@ -90,11 +120,11 @@ class JsonManager extends AbstractController
                 }
             }
 
-            // the ------- unset() ------- function remove the object AND his index key in the objects array.
+            // the ------- unset() ------- function remove the object datas AND the object index key in the objects array.
             // So I need to reindex objects using  ----- array_values() ------ 
             // This will  preserve the initial array indexes notation :  [{...} {...}] like used in Front End 
             // json_encode only when some indexes are empty create a re-indexed json object like this {0: {}, 1: {}...}
-            // And the front end will be broken cause it wait a json object like this [{...} {...}]
+            // And the front end will be broken cause it wait a json object like this [{...} {...}] in ajax response
 
             $jsonFile = json_encode(array_values($jsonFile));
             file_put_contents($fileName, $jsonFile);
@@ -106,7 +136,13 @@ class JsonManager extends AbstractController
         return false;
     }
 
-    // search user by id in the json file if json file exist
+    /**
+     * Search user by id in the json file 
+     *
+     * @param [type] $id
+     * @param [type] $fileName
+     * @return void
+     */
     public function searchUserInJsonFile($id, $fileName)
     {
         $publicDirectory = $this->getParameter('kernel.project_dir').'/public';
