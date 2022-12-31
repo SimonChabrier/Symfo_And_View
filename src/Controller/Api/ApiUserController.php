@@ -14,55 +14,112 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
+// use the JsonManager service to create the json file with the users data and don't use the database if the json file exist
+use App\Service\JsonManager;
 
 class ApiUserController extends AbstractController
 {   
    
-//////////////////////////////////////////////* USER CRUD 
+//////////////////////////////////////////////* USER API CRUD 
 
     /**
      * Retourne l'ensemble des utilisateurs
      * @Route("/api/users", name="api.get.users", methods={"GET"})
      */
-    public function apiGet(UserRepository $userRepository): Response
+    public function getAllUsers(UserRepository $userRepository, JsonManager $JsonManager): Response
     {   
+
+        // if database is empty
+        if (count($userRepository->findAll()) == 0) {
+
+            // delete the json file if exist
+            if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
+                unlink($this->getParameter('kernel.project_dir').'/public/json/users.json');
+            }
+
+            // return json with message and empty array
+            return $this->json(
+                [
+                    'message' => 'No user in database',
+                    'users' => []
+                ],
+                Response::HTTP_OK,
+                [],
+                ['groups' => 'user:read']
+            );
+        }
+
+        // check if the users.json file exists in the public folder
+        if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
+            $message = 'ALl users from json file';
+            // get all users from the json file
+            $usersFromJsonFile = file_get_contents($this->getParameter('kernel.project_dir').'/public/json/users.json');
+            $users = json_decode($usersFromJsonFile, true);
+
+        } else {
+            $message = 'ALl users from database';
+            // get all users from the database and create the json file
+            $usersFromDataBase = $userRepository->findAll();
+            $users = $JsonManager->jsonFileInit($usersFromDataBase, 'user:read', 'users.json', 'json'); 
+        }
+
+        // retrun json with message and users
         return $this->json(
-            $userRepository->findAll(),
-            Response::HTTP_OK, 
-            // https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
-            [ 'Access-Control-Allow-Origin' => '*'], 
+            [
+                'message' => $message,
+                'users' => $users
+            ],
+            Response::HTTP_OK,
+            [],
             ['groups' => 'user:read']
         );
+
+        
     }
 
     /**
      * Retourne un utilisateur en fonction de son id
      * @Route("/api/users/{id}", name="api.get.user", methods={"GET"})
      */
-    public function apiGetUser(User $user): Response
-    {
-        if ($user) {
-            return $this->json(
-                $user,
-                Response::HTTP_OK,
-                [],
-                ['groups' => 'user:read']
-            );
+    public function getUserbyId(Request $request, JsonManager $JsonManager, UserRepository $userRepository): Response
+    {   
+
+        // if json file exists
+        if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
+            
+            $message = 'user from json file';
+            $userId = $request->attributes->get('id');
+            $user = $JsonManager->searchUserInJsonFile($userId, 'users.json');
+
+        } else {
+
+            $message = 'user from database';
+            $user = $userRepository->find($request->attributes->get('id'));
         }
+
+        return $this->json(
+            [
+                'message' => $message,
+                'user' => $user
+            ],
+            Response::HTTP_OK,
+            [],
+            ['groups' => 'user:read']
+        );
     }
 
     /**
      * Enregistrer un nouvel utilisateur
      * @Route("/api/users/register", name="api.post.user", methods={"POST"})
      */
-    public function apiPostUser(
+    public function postUser(
         EntityManagerInterface $doctrine,
         Request $request,
         SerializerInterface $serializer,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        UserRepository $userRepository,
+        JsonManager $JsonManager
     ): Response
     {   
         $data = $request->getContent();
@@ -78,9 +135,16 @@ class ApiUserController extends AbstractController
             return new JsonResponse($errorsString, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        // save the new user in the database
         $doctrine->persist($user);
         $doctrine->flush();
 
+        // add the new user entry created in database to the json file 
+        if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
+            $userToSerialize = $userRepository->findOneBy([], ['id' => 'DESC']);
+            $JsonManager->addUserToJsonFile($userToSerialize, 'user:read', 'users.json', 'json');
+        }
+       
         return $this->json(
             $user,
             Response::HTTP_CREATED,
@@ -93,12 +157,13 @@ class ApiUserController extends AbstractController
      * Mettre à jour un utilisateur
      * @Route("/api/users/{id}", name="api.patch.user", methods={"PATCH"})
      */
-    public function apiPatchUser(
+    public function patchUser(
         User $user,
         EntityManagerInterface $doctrine,
         Request $request,
         SerializerInterface $serializer,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        JsonManager $JsonManager
     ): Response
     {   
         $data = $request->getContent();
@@ -112,9 +177,15 @@ class ApiUserController extends AbstractController
             return new JsonResponse($errorsString, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        // save the user in the database
         $doctrine->persist($user);
         $doctrine->flush();
 
+        // update the json file using the service updateUserToJsonFile
+        if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
+            $JsonManager->updateUserInJsonFile($user, 'user:read', 'users.json', 'json');
+        }
+    
         return $this->json(
             $user,
             Response::HTTP_OK,
@@ -127,17 +198,26 @@ class ApiUserController extends AbstractController
      * Supprimer un utilisateur
      * @Route("/api/users/delete/{id}", name="api.delete.user", methods={"DELETE"})
      */
-    public function apiDeleteUser(
+    public function deleteUser(
         User $user,
-        EntityManagerInterface $doctrine
+        EntityManagerInterface $doctrine,
+        JsonManager $JsonManager
     ): Response
     {   
+
+        // update the json file using the service updateUserToJsonFile
+        if (file_exists($this->getParameter('kernel.project_dir').'/public/json/users.json')) {
+            $JsonManager->deleteUserFromJsonFile($user->getId(), 'users.json');
+        }
+
+        // delete user from database
         $doctrine->remove($user);
         $doctrine->flush();
 
         return $this->json(
             [
                 'message' => 'Utilisateur supprimé', 
+                // username only for display the info message in front (no security issue here)
                 'username' => $user->getUsername(),
             ],
             Response::HTTP_OK,
@@ -146,93 +226,6 @@ class ApiUserController extends AbstractController
         );
     }
 
-//////////////////////////////////////////////* USER ACTIONS
-    
-    /**
-     * Permet d'enregistrer un utilisateur
-     * @Route("/api/register", name="api_user_register", methods={"POST"})
-     */
-    public function apiUserRegister(
-        EntityManagerInterface $doctrine,
-        Request $request,
-        SerializerInterface $serializer,
-        ValidatorInterface $validator
-    ): Response
-    {   
-    
-        $data = $request->getContent();
-        $user = $serializer->deserialize($data, User::class, 'json');
-        $errors = $validator->validate($user);
 
-        // hash du mot de passe depuis la requête
-        $user->setPassword(
-            password_hash($user->getPassword(), PASSWORD_BCRYPT)
-        );
-
-        if (count($errors) > 0) {
-            $errorsString = (string) $errors;
-            return new JsonResponse($errorsString, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        $doctrine->persist($user);
-        $doctrine->flush();
-
-        return $this->json(
-            $user,
-            Response::HTTP_CREATED,
-            [],
-            ['groups' => ['user:read']]
-        );
-    }
-
-    // json loginroute
-
-    /**
-     * Permet de se connecter 
-     * crée et retourne un Jwt Token
-     * connecte aussil'utilisateur dans symfony.
-     * via le firewall main et et mon custom authenticator
-     * 
-     * @Route("/api/login", name="api.login", methods={"POST"})
-     */
-    public function apiLogin(UserInterface $user, JWTTokenManagerInterface $JWTManager)
-    {       
-            // Format de données à envoyer en POST
-            // login dépend de la propriété donnée au pramètre app_user_provider dans security.yaml pour le firewall main
-            // {
-            //     "security": {
-            //         "credentials": {
-            //             "login": "simon",
-            //             "password": "password"
-            //         }
-            //     }
-            // }
-
-            $user = $this->getUser();
-    
-            return new JsonResponse([
-                'username' => $user->getUserIdentifier(),
-                'roles' => $user->getRoles(),
-                'token' => $JWTManager->create($user)
-            ]);
-    }
-
-    // json logout route
-
-    /**
-     * Permet de se déconnecter
-     * @Route("/api/logout", name="api.logout", methods={"POST"})
-     */
-    public function apiLogout()
-    {
-        // le logout est géré par le firewall main et le custom authenticator
-        // il suffit de faire une requête POST sur cette route pour se déconnecter
-        // le token est invalide après déconnexion
-
-        return new JsonResponse([
-            'message' => 'Déconnexion réussie'
-        ]);
-        
-    }
 
 }

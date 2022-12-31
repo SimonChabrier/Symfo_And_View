@@ -32,14 +32,13 @@ export default createStore ({
   // les mutations permettent de modifier le state de manière synchrone
   mutations: {
 
-    // Gestion des users
+    // Gestion des users en base de données
     setUsers(state, allUsers) {
       state.allUsers = allUsers;
     },
     setUser(state, user) {
       state.allUsers.push(user);
       state.user = user;
-      
     },
     setSearchUsers(state, results) {
       state.searchUsers = results;
@@ -58,9 +57,13 @@ export default createStore ({
     incrementCount(state) {
       state.count = state.count + 1;
     },
+
+    // gestion des erreurs
     catchErrors(state, errors) {
       state.errors = errors;
     },
+
+    // gestion de l'authentification de l'utilisateur connecté
     setLoggedIn(state, loggedIn) {
       state.loggedIn = loggedIn;
     },
@@ -83,9 +86,10 @@ export default createStore ({
       try { await axios.get (API_ROOT_URL, { headers })
       .then(response => {
           if (response.status === 200) {
-            context.commit('setUsers', response.data);
-            context.commit('setCount', response.data.length);
-            console.log(context.state.allUsers);
+            console.log(response.data);
+            context.commit('setUsers', response.data.users);
+            context.commit('setCount', response.data.users.length);
+            // console.log(context.state.allUsers);
             // set loggedIn to true if token exists
               if(authServices.checkToken() === true && localStorage.getItem('username')){
                 context.commit('setLoggedIn', true);
@@ -111,9 +115,27 @@ export default createStore ({
     // mais si je veux la sécuriser le token est ici dans le header..
     async fetchUser(context, id) {
       const headers = authServices.authenticateUser();
-      const response = (await axios.get (API_ROOT_URL + '/' + id, { headers })).data
-      context.commit('setUser', response);
-      console.log(context.state.user);
+      try { await axios.get (API_ROOT_URL + '/' + id, { headers })
+      .then(response => {
+          if (response.status === 200) {
+            console.log(response.data);
+            context.commit('setUser', response.data.user);
+          }
+        });
+      } catch (error) {
+        if (error.response) {
+          context.commit('catchErrors', `Erreur Code : ${error.response.data.status}`);
+          // console.log(context.state.errors);
+          // console.log(error.response.data);
+          // console.log(error.response.status);
+          // console.log(error.response.headers);
+        }
+      }
+
+
+      // const response = (await axios.get (API_ROOT_URL + '/' + id, { headers })).data
+      // context.commit('setUser', response);
+      // console.log(context.state.user);
     },
 
     // delete un user par son id
@@ -152,6 +174,10 @@ export default createStore ({
         const results = '';
         context.commit('setSearchUsers', results);
       }
+    },
+
+    resetUser(context) {
+      context.commit('setUser', '');
     },
 
     logout(context) {

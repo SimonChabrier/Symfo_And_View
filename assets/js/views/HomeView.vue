@@ -3,6 +3,7 @@
 
         <!-- Bloc Search input  -->
         <div class="search">
+            <label for="user search">Recherche</label>
             <input type="text" placeholder="Rechercher un utilisateur" v-model="search" @input="getSearchDatas">
         </div>
 
@@ -44,7 +45,7 @@
             </div>
         </Transition>
 
-        <!-- Bloc user created message -->
+        <!-- Message info dernier utilisateur enregistré -->
 
         <Transition duration="550" name="nested">
             <div class="lastUser" v-if="$store.state.user.username">
@@ -68,25 +69,23 @@
 
         <!-- user list  -->
         <div class="usersList" v-else>
-
             <h1 class="title">{{ $store.state.count > 1 ? `${$store.state.count} utilisateurs enregistrés` : `${$store.state.count} utilisateur enregistré` }}</h1>
-
-            <div class="userItem" v-if="$store.state.allUsers.length > 0">
-                <TransitionGroup name="list" tag="ul">
+            
+            <TransitionGroup name="list" tag="ul">
+                <div class="userItem" v-if="$store.state.allUsers.length > 0">
                     <li v-for="user in $store.state.allUsers" :key="user.id">
-                        
-                            <button v-if="user.username != $store.state.adminName && $store.state.loggedIn === true" aria-label='delete user item' 
-                                @click = " deleteUser(user.id) " 
-                                type='button'> X
-                            </button>
-                    
-                            <router-link :to="{ name: 'user', params: { id: user.id }}">
-                                {{ user.username }} 
-                            </router-link>
-                        
+                        <button v-if="user.username != $store.state.adminName && $store.state.loggedIn === true" aria-label='delete user item' 
+                            @click = " deleteUser(user.id) " 
+                            type='button'> X
+                        </button>
+                
+                        <router-link :to="{ name: 'user', params: { id: user.id }}">
+                            {{ user.username }} 
+                        </router-link>
                     </li>
-                </TransitionGroup>
-            </div>
+                </div>
+            </TransitionGroup>
+
         </div>
 
         <!-- Bloc inscription  -->
@@ -333,6 +332,7 @@ input {
     width: 100%;
     height: 50px;
     padding: 0 $gutter-small;
+    margin-top: $gutter-small;
     margin-bottom: $gutter-big;
     border: none;
     border-radius: 5px;

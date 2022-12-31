@@ -1,6 +1,6 @@
 <template>
     <div class="nav-bar">
-            <router-link to="/">Home</router-link> |
+            <router-link @click="resetUser" to="/">Home</router-link> |
             <router-link to="/register">Register</router-link>
     </div>
 </template>
@@ -13,6 +13,14 @@ export default {
         return {
             message: 'Hello from NavBarComponent'
         }
+    },
+
+    methods: {
+        resetUser() {
+          this.$store.dispatch('resetUser', {});
+          console.log('resetUser');
+        }
+      
     }
 }
 </script>
@@ -24,7 +32,8 @@ export default {
   justify-content: center;
   align-items: center;
   padding: 15px 0;
-  margin: 20px 0;
+  margin-bottom: $gutter-big;
+  margin-top: $gutter-small;
   color: $lightWhite;
   background-color: $mediumBlue;
 }
