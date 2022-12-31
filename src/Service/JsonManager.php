@@ -89,7 +89,13 @@ class JsonManager extends AbstractController
                     unset($jsonFile[$key]);
                 }
             }
-            // make a new array of objects without reindex each object using array_values() on $jsonFile
+
+            // the ------- unset() ------- function remove the object AND his index key in the objects array.
+            // So I need to reindex objects using  ----- array_values() ------ 
+            // This will  preserve the initial array indexes notation :  [{...} {...}] like used in Front End 
+            // json_encode only when some indexes are empty create a re-indexed json object like this {0: {}, 1: {}...}
+            // And the front end will be broken cause it wait a json object like this [{...} {...}]
+
             $jsonFile = json_encode(array_values($jsonFile));
             file_put_contents($fileName, $jsonFile);
             rename($publicDirectory.'/'.$fileName, $publicDirectory.'/json/'.$fileName);
