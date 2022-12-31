@@ -19,8 +19,10 @@ Use it to start a project with a skeleton project.
 - Twig Bundle
 - Nelmio Cors Bundle
 - Symfony Serializer Pack
-- Symfony Webpack Encore Bundle + eslint
+- Symfony Webpack Encore Bundle
 - Vuejs 3 + vue-loader 17
+- Vue Router
+- Vuex
 - Axios
 
 ## Available feature
@@ -35,7 +37,7 @@ Use it to start a project with a skeleton project.
 - CreatedAt UpdatedAt generate in User Entity by Stof Extensio Bundle
 - Slug generate in User Entity by Stof Extensio Bundle
 - Public directory content: pictures / css + reset.css -> scss ready (need Sass Compiler extension) / fonts -> Poppins / js / Favicon
-- <head> ready to personalize
+- ready to personalize
 
 ## How to use
 

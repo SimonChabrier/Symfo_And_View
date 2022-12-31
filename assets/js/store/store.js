@@ -3,6 +3,8 @@ import axios from 'axios'
 import authServices from '@sevices/auth.service.js'
 
 const API_ROOT_URL = 'https://127.0.0.1:8000/api/users'
+//const API_ROOT_URL = 'https://vue-users.simschab.fr/api/users'
+
 
 
 export default createStore ({

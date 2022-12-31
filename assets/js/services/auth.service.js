@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API_URL = 'https://127.0.0.1:8000/api/login';
+//const API_URL = 'https://vue-users.simschab.fr/api/login';
 
 const authServices =  {
 
@@ -29,6 +30,7 @@ async killAuth() {
     console.log('killAuth');
 
     return await axios.post('https://127.0.0.1:8000/logout').then(response => {
+    //return await axios.post('https://vue-users.simschab.fr/logout').then(response => {
 
         console.log(response.status);
 
