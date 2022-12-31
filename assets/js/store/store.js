@@ -162,8 +162,11 @@ export default createStore ({
         const results = context.state.searchUsers.filter(user => user.id !== id);
         context.commit('setSearchUsers', results);
       }
-      // je refectche l'ensemble des users pour mettre à jour le tableau des users dans le state et garder à jour l'affichage de HomeView
-      context.dispatch('fetchUsers');
+      // supprimer l'utilisateur supprimé du tableau des users
+      const users = context.state.allUsers.filter(user => user.id !== id);
+      context.commit('setUsers', users);
+      // supprime l'utilisateur de la page de détail si il est affiché
+      context.commit('setUser', '');
     },
 
     // enregistrer un nouveau user
