@@ -119,6 +119,8 @@ export default createStore ({
       const headers = authServices.authenticateUser();
       try { await axios.get (API_ROOT_URL + '/' + id, { headers })
       .then(response => {
+        console.log(response.data);
+        console.log(response.status);
           if (response.status === 200) {
             console.log(response.data);
             context.commit('setUser', response.data.user);
@@ -128,6 +130,7 @@ export default createStore ({
               context.commit('setLoggedInUser', localStorage.getItem('username'));
             } else {
               context.commit('setLoggedIn', false);
+              
             }
 
           }
