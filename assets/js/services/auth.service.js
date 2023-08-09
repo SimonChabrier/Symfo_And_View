@@ -19,7 +19,6 @@ async getAuth(user) {
 
     return axios.post(API_URL, data)
     .then(response => { 
-        console.log(response.data.username);
         localStorage.setItem('token', JSON.stringify(response.data.token)); 
         localStorage.setItem('username', JSON.stringify(response.data.username)); 
     })
@@ -31,8 +30,6 @@ async killAuth() {
 
     //return await axios.post('https://127.0.0.1:8000/logout').then(response => {
     return await axios.post('https://vueusers.simschab.cloud/logout').then(response => {
-
-        console.log(response.status);
 
         localStorage.removeItem('token');
         localStorage.removeItem('username');
