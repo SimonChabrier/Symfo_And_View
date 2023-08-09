@@ -19,7 +19,7 @@ async getAuth(user) {
 
     return axios.post(API_URL, data)
     .then(response => { 
-        console.log(response.data);
+        console.log(response.data.username);
         localStorage.setItem('token', JSON.stringify(response.data.token)); 
         localStorage.setItem('username', JSON.stringify(response.data.username)); 
     })
